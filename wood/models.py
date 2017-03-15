@@ -77,17 +77,17 @@ class ConcreteProduct(models.Model):
     price = models.IntegerField()
     number = models.IntegerField()
     time_production = models.DateTimeField()
-    material = models.ForeignKey(Material, on_delete=models.CASCADE)
-    coating = models.ForeignKey(Coating, on_delete=models.CASCADE)
-    size = models.ForeignKey(Size, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    material = models.ForeignKey(Material, on_delete=models.PROTECT)
+    coating = models.ForeignKey(Coating, on_delete=models.PROTECT)
+    size = models.ForeignKey(Size, on_delete=models.PROTECT)
+    product = models.ForeignKey(Product, on_delete=models.PROTECT)
 
 
 # Изображение
 class Image(models.Model):
     id = models.AutoField(primary_key=True)
     url = models.CharField(max_length=1000)
-    concrete_product = models.ForeignKey(ConcreteProduct, on_delete=models.CASCADE)
+    concrete_product = models.ForeignKey(ConcreteProduct, on_delete=models.PROTECT)
 
 
 # Заказ
@@ -96,8 +96,8 @@ class Order(models.Model):
     date = models.DateField()
     status = models.CharField(max_length=300)
     information = models.CharField(max_length=5000)
-    client = models.ForeignKey(Client, on_delete=models.CASCADE)
-    type_of_delivery = models.ForeignKey(TypeOfDelivery, on_delete=models.CASCADE)
+    client = models.ForeignKey(Client, on_delete=models.PROTECT)
+    type_of_delivery = models.ForeignKey(TypeOfDelivery, on_delete=models.PROTECT)
 
 
 # Позиция в заказе
@@ -105,8 +105,8 @@ class PositionInOrder(models.Model):
     id = models.AutoField(primary_key=True)
     # Цена в копейках
     amount = models.IntegerField()
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    concrete_product = models.ForeignKey(ConcreteProduct, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.PROTECT)
+    concrete_product = models.ForeignKey(ConcreteProduct, on_delete=models.PROTECT)
 
 
 # Индивидальный заказ
@@ -115,4 +115,4 @@ class PersonalOrder(models.Model):
     requirements = models.CharField(max_length=5000)
     # !!! Нужно понять, как будут храниться приложения к индивидуальному заказу !!!
     attachments = None
-    client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    client = models.ForeignKey(Client, on_delete=models.PROTECT)
