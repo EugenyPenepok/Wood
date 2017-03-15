@@ -7,11 +7,7 @@
 4. Создаёте Database с названием wood.
 5. Открываете проект в PyCharm.
 6. В качестве конфигурации для исполнения нужно создать окружение и указать его.
-7. Во вкладке Terminal в нижней панели выполняете следующие команды:
-  -python -m pip install --upgrade pip
-  -pip install django
-  -pip install psycopg2
-  -python manage.py migrate
+7. Во вкладке Terminal в нижней панели выполняете следующие команды: "python -m pip install --upgrade pip", "pip install django", "pip install psycopg2", "python manage.py migrate".
   
 База заполнится автоматически. Данных команд должно быть достаточно для работы.
 
