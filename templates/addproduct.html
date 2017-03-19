@@ -1,10 +1,10 @@
-<!-- Добавление изделия -->
+<!-- Р”РѕР±Р°РІР»РµРЅРёРµ РёР·РґРµР»РёСЏ -->
 <div class="modal fade" data-modal-color="lightgreen" id="AddModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog" role="document">
 	<div class="modal-content">
 	  <div class="modal-header">
 		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-		<h4 class="modal-title">Добавление нового изделия</h4>
+		<h4 class="modal-title">Р”РѕР±Р°РІР»РµРЅРёРµ РЅРѕРІРѕРіРѕ РёР·РґРµР»РёСЏ</h4>
 	  </div>
 	<form method="POST" action="/category/{{category.id}}" ">
 	  <div class="modal-body">
@@ -12,22 +12,22 @@
 			<div class="col-xs-12 col-sm-12">
 				<div class="row">
 					<div class="form-group col-sm-6">
-						<label for="inputName">Название</label>
+						<label for="inputName">РќР°Р·РІР°РЅРёРµ</label>
 						<input name="name" id="inputName" class="form-control" type="text">
 					</div>
 					<div class="form-group col-sm-6">
-						<label for="inputPrice">Цена</label>
+						<label for="inputPrice">Р¦РµРЅР°</label>
 						<input name="price" id="inputPrice" class="form-control" type="number" min="0" value="0">
 					</div>
 					<div class="form-group col-sm-6">
-						<label for="inputAmount">Количество</label>
+						<label for="inputAmount">РљРѕР»РёС‡РµСЃС‚РІРѕ</label>
 						<input name="amount" id="inputAmount" class="form-control" type="number" min="0" value="0">
 					</div>
 				</div>
 				
 				<div class="row">
 					<div class="form-group col-sm-6">
-						<label for="description">Описание</label>
+						<label for="description">РћРїРёСЃР°РЅРёРµ</label>
 						<textarea name="comment" class="form-control" id="description" rows="8"></textarea>
 						<style type="text/css">
 							#information { resize: none; }
@@ -37,7 +37,7 @@
 				
 				<div class="row">										
 					<div class="form-group col-sm-6">
-						<label for="MaterialsMultiSelect">Материалы</label>
+						<label for="MaterialsMultiSelect">РњР°С‚РµСЂРёР°Р»С‹</label>
 						{% for m in materials %}
 							<br>
 							<input name="materials[]" value="{{m.id}}" type="checkbox">{{m.Name}}</input>
@@ -45,7 +45,7 @@
 					</div>
 					
 					<div class="form-group col-sm-6">
-						<label for="sizesMultiSelect">Размеры</label>
+						<label for="sizesMultiSelect">Р Р°Р·РјРµСЂС‹</label>
 						{% for s in sizes %}
 							<br>
 							<input name="sizes[]" value="{{s.id}}" type="checkbox">{{s.dims}}</input>
@@ -53,7 +53,7 @@
 					</div>
 					
 					<div class="form-group col-sm-6">
-						<label for="coversMultiSelect">Покрытия</label>
+						<label for="coversMultiSelect">РџРѕРєСЂС‹С‚РёСЏ</label>
 						{% for c in covers %}
 							<br>
 							<input name="covers[]" value="{{c.id}}" type="checkbox">{{c.Name}}</input>
@@ -65,8 +65,8 @@
 		</div>
 	  </div>
 	  <div class="modal-footer">
-		<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
-		<button type="submit" class="btn btn-primary">Создать</button>
+		<button type="button" class="btn btn-default" data-dismiss="modal">Р—Р°РєСЂС‹С‚СЊ</button>
+		<button type="submit" class="btn btn-primary">РЎРѕР·РґР°С‚СЊ</button>
 	  </div>
 	</form>
 	</div>
