@@ -23,4 +23,8 @@ def get_category_content(_request, category_id):
 
 
 def get_product_add(_request, category_id):
-    return render(_request, 'addproduct.html', category_id)
+    covers = Coating.objects.all()
+    materials = Material.objects.all()
+    sizes = Size.objects.all()
+    context = {"category_id": category_id, "covers": covers,"materials":materials,"sizes":sizes}
+    return render(_request, 'addproduct.html', context)
