@@ -33,3 +33,7 @@ def get_product_add(_request, category_id):
 def save_product(request):
     product = Product()
     return None
+
+
+def get_orders(request):
+    return render(request, 'order.html')

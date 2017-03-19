@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block rows %}
+
+{% load static %}
+
+<!--Шапочка -->
+<div class="catalog-header">
+    <div class="col-lg-12">
+        <h1>Оформление индивидуального заказа</h1>
+        <!-- <h4>Что-то</h4> -->
+
+    </div>
+</div>
+
+<div class = "container">
+    <div class = "row">
+        <img src = "../img/orn_gal.png" class="img-responsive center-block" />
+    </div>
+</div>
+<!--./Шапочка-->
+<div class = "container">
+    <div class="card">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <h4>Ваша заявка будет рассмотрена в ближайшее время</h4>
+                <hr>
+                <div class="form-group">
+                    <label for="fam" class="required">Фамилия:</label>
+                    <input required="true" type="text" class="form-control" id="fam">
+
+                    <label for="name" class="required">Имя:</label>
+                    <input required="true" type="text" class="form-control" id="name">
+
+                    <label for="otch" class="required">Отчество:</label>
+                    <input type="text" class="form-control" id="otch">
+
+                    <label for="email" class="required">E-mail:</label>
+                    <input required="true" type="email" class="form-control" id="email">
+
+                    <label for="telefon" class="required">Номер телефона:</label>
+                    <input required="true" type="tel" class="form-control" id="telefon">
+
+                    <label for="info" class="required">Опишите требования к заказу:</label>
+                    <textarea required="true" class="form-control " rows="5" id="info"></textarea>
+
+                    <label for="input-1a" class="control-label">Приложите изображение</label>
+                    <input id="input-1a" type="file" class="file" data-show-preview="false">
+                </div>
+
+                <div class="button-wrap">
+                    <input class="btn btn-primary   center-block" type="submit" name="zakaz_submit"
+                           value="Отправить"/>
+                </div>
+
+            </div><!-- /.blog-post -->
+        </div><!-- /.blog-main -->
+    </div>
+</div>
+
+{% endblock %}
