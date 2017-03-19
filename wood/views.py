@@ -26,5 +26,10 @@ def get_product_add(_request, category_id):
     covers = Coating.objects.all()
     materials = Material.objects.all()
     sizes = Size.objects.all()
-    context = {"category_id": category_id, "covers": covers,"materials":materials,"sizes":sizes}
+    context = {"category_id": category_id, "covers": covers, "materials": materials, "sizes": sizes}
     return render(_request, 'addproduct.html', context)
+
+
+def save_product(request):
+    product = Product()
+    return None

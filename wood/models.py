@@ -21,22 +21,20 @@ class Product(models.Model):
 class Coating(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200)
-    description = models.CharField(max_length=2000)
+    description = models.CharField(max_length=2000, blank=True, null=True)
 
 
 # Материал
 class Material(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200)
-    description = models.CharField(max_length=2000)
+    description = models.CharField(max_length=2000, blank=True, null=True)
     amount = models.DecimalField(max_digits=13, decimal_places=3)
 
 
 # Размер
 class Size(models.Model):
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=200)
-    description = models.CharField(max_length=2000)
     # Размеры в миллиметрах
     length = models.IntegerField()
     width = models.IntegerField()
