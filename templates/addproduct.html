@@ -6,7 +6,7 @@
 		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 		<h4 class="modal-title">Добавление нового изделия</h4>
 	  </div>
-	<form method="POST" action="/category/{{category.id}}" ">
+	<form method="POST" action="{% url 'product_add' category_id %}" >
 	  <div class="modal-body">
 		<div class="row row-offcanvas row-offcanvas-right">
 			<div class="col-xs-12 col-sm-12">

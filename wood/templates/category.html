@@ -39,7 +39,7 @@
                         </div>
                         <div class="col-md-6">
                             <div class="lib-row lib-header">
-                                <a href="/category/{{cat.id}}">{{cat.name}}</a>
+                                <a href="{% url 'category_content' cat.id %}">{{cat.name}}</a>
                                 <div class="lib-header-seperator"></div>
                             </div>
                             <div class="lib-row lib-desc">
