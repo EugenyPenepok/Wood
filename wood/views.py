@@ -46,5 +46,11 @@ def category_add(request):
 
 def category_edit(request, category_id):
     category = Category.objects.get(pk=category_id)
-    context = {"category": category}
-    return render(request, 'editcategory.html', context)
+    if request.method == 'POST':
+        category.name = request.POST['name']
+        category.description = request.POST['comment']
+        category.save()
+        return redirect('category')
+    else:
+        context = {"category": category}
+        return render(request, 'editcategory.html', context)
