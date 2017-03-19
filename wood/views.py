@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 # Create your views here.
 from wood.models import *
@@ -33,3 +33,18 @@ def get_product_add(_request, category_id):
 def save_product(request):
     product = Product()
     return None
+
+
+def category_delete(_request, category_id):
+    Category.objects.get(pk=category_id).delete()
+    return redirect('category')
+
+
+def category_add(request):
+    return render(request, 'addcategory.html')
+
+
+def category_edit(request, category_id):
+    category = Category.objects.get(pk=category_id)
+    context = {"category": category}
+    return render(request, 'editcategory.html', context)
