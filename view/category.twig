@@ -1,0 +1,55 @@
+{% extends "base.twig" %}
+
+{% block rows %}
+
+<!-- Custom CSS -->
+<link href="/css/gallery.css" rel="stylesheet">
+
+<!-- Custom Fonts -->
+<link href="/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+<link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
+
+<!--Шапочка -->
+    <div class="catalog-header">
+        <div class="col-lg-12">
+                <h1>Продукция</h1>
+                <!-- <h4>Перечень категорий изделий</h4> -->
+
+        </div>
+    </div>
+
+    <div class = "container">
+        <div class = "row">
+            <img src = "../img/orn_gal.png" class="img-responsive center-block" />
+        </div>
+    </div>
+    <!--./Шапочка-->
+
+    <!--Gallery catalogs --->
+    <div class="container">
+        <div class="row row-margin-bottom">
+		{% for cat in category %}
+            <div class="col-md-6">
+                <div class="lib-panel">
+                    <div class="row box-shadow">
+                        <div class="col-md-6">
+                            <img class="lib-img-show" src="../img/category/cat{{cat.id}}.jpg">
+                        </div>
+                        <div class="col-md-6">
+                            <div class="lib-row lib-header">
+                                <a href="/category/{{cat.id}}">{{cat.name}}</a>
+                                <div class="lib-header-seperator"></div>
+                            </div>
+                            <div class="lib-row lib-desc">
+                                <p>{{cat.description}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+		{% endfor %}
+        </div>
+    </div>
+    <!--./Gallery catalogs --->
+
+{% endblock %}
