@@ -65,7 +65,6 @@ def category_edit(request, category_id):
     if request.method == 'POST':
         image_file = request.FILES.get('image', False)
         if image_file:
-            image_file = (request.FILES['image'])
             default_storage.delete(path_prefix + category.image_path)
             save_path = "upload/category/" + image_file.name
             upload_path = default_storage.save(path_prefix + save_path, ContentFile(image_file.read()))
@@ -79,5 +78,32 @@ def category_edit(request, category_id):
         context = {"category": category}
         return render(request, 'editcategory.html', context)
 
+
 def get_orders(request):
-    return render(request, 'order.html')
+    if request.method == 'GET':
+        return render(request, 'order.html')
+    elif request.method == 'POST':
+        client = Client.objects.filter(name=request.POST['name'],
+                                       surname=request.POST['surname'],
+                                       patronymic=request.POST['patronymic'],
+                                       telephone=request.POST['telephone'],
+                                       email=request.POST['email'])
+        if not client:
+            client = Client(name=request.POST['name'],
+                            surname=request.POST['surname'],
+                            patronymic=request.POST['patronymic'],
+                            telephone=request.POST['telephone'],
+                            email=request.POST['email'])
+            client.save()
+        else:
+            client = client[0]
+        file = (request.FILES['attachments'])
+        if client:
+            save_path = "upload/personal_orders/" + file.name
+            upload_path = default_storage.save(path_prefix + save_path, ContentFile(file.read()))
+            real_path = upload_path.split(path_prefix)[1]
+            personal_order = PersonalOrder(client=client,
+                                           requirements=request.POST['requirements'],
+                                           attachments=real_path)
+            personal_order.save()
+            return redirect('index')

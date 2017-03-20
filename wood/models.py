@@ -57,13 +57,13 @@ class Client(models.Model):
     name = models.CharField(max_length=100)
     surname = models.CharField(max_length=100)
     patronymic = models.CharField(max_length=100)
-    username = models.CharField(max_length=100)
-    password = models.CharField(max_length=100)
+    # username = models.CharField(max_length=100)
+    # password = models.CharField(max_length=100)
     email = models.CharField(max_length=100)
-    skype = models.CharField(max_length=100)
+    # skype = models.CharField(max_length=100)
     telephone = models.CharField(max_length=100)
-    address = models.CharField(max_length=1000)
-    postcode = models.CharField(max_length=30)
+    # address = models.CharField(max_length=1000)
+    # postcode = models.CharField(max_length=30)
 
     def __str__(self):
         return self.name + ' ' + self.surname + ' ' + self.patronymic
@@ -109,10 +109,9 @@ class PositionInOrder(models.Model):
     concrete_product = models.ForeignKey(ConcreteProduct, on_delete=models.PROTECT)
 
 
-# Индивидальный заказ
+# Индивидуальный заказ
 class PersonalOrder(models.Model):
     id = models.AutoField(primary_key=True)
     requirements = models.CharField(max_length=5000)
-    # !!! Нужно понять, как будут храниться приложения к индивидуальному заказу !!!
-    attachments = None
+    attachments = models.CharField(max_length=1000)
     client = models.ForeignKey(Client, on_delete=models.PROTECT)
