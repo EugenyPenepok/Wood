@@ -3,3 +3,4 @@
 .idea/
 wood/__pycache__/
 wood_site/__pycache__/
+wood/static/upload/
