@@ -4,6 +4,8 @@ from django.core.files.base import ContentFile
 # Create your views here.
 from wood.models import *
 
+path_prefix = 'wood/static/'
+
 
 def get_values(_request):
     return render(_request, 'index.html')
@@ -36,7 +38,10 @@ def save_product(request):
 
 
 def category_delete(_request, category_id):
-    Category.objects.get(pk=category_id).delete()
+    category = Category.objects.get(pk=category_id)
+    image_path = category.image_path
+    category.delete()
+    default_storage.delete(path_prefix + image_path)
     return redirect('category')
 
 
@@ -45,7 +50,6 @@ def category_add(request):
         return render(request, 'addcategory.html')
     elif request.method == 'POST':
         image_file = (request.FILES['image'])
-        path_prefix = 'wood/static/'
         save_path = "upload/category/" + image_file.name
         upload_path = default_storage.save(path_prefix + save_path, ContentFile(image_file.read()))
         real_path = upload_path.split(path_prefix)[1]
@@ -62,7 +66,7 @@ def category_edit(request, category_id):
         image_file = request.FILES.get('image', False)
         if image_file:
             image_file = (request.FILES['image'])
-            path_prefix = 'wood/static/'
+            default_storage.delete(path_prefix + category.image_path)
             save_path = "upload/category/" + image_file.name
             upload_path = default_storage.save(path_prefix + save_path, ContentFile(image_file.read()))
             real_path = upload_path.split(path_prefix)[1]
