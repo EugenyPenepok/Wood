@@ -1,36 +1,37 @@
 {% extends "base.html" %}
 
 {% block rows %}
-{% load static %}
-
-<div class="container form">
-    <div class="col-xs-12 col-sm-12">
-    <h4>Добавление нового изделия</h4>
-	<form method="POST" enctype="multipart/form-data" action="{% url 'category_add' %}" >
-        {% csrf_token %}
-				<div class="row">
-					<div class="form-group col-sm-6">
-						<label for="inputName">Название</label>
-						<input name="name" id="inputName" class="form-control" type="text">
-					</div>
-                </div>
-
-				<div class="row">
-					<div class="form-group col-sm-6">
-						<label for="description">Описание</label>
-						<textarea name="comment" class="form-control" id="description" rows="8"></textarea>
-					</div>
-				</div>
+    {% load static %}
+    <script type="text/javascript" src=" {% static "/js/checkCategory.js" %}"></script>
+    <div class="container form">
+        <div class="col-xs-12 col-sm-12">
+            <h4>Добавление нового изделия</h4>
+            <div class="alert alert-danger hidden" id="errorMessage" role="alert"></div>
+            <form method="POST" enctype="multipart/form-data" action="{% url 'category_add' %}"  onsubmit="return checkCategory();">
+                {% csrf_token %}
                 <div class="row">
                     <div class="form-group col-sm-6">
-					    <label for="image">Картинка</label>
-					    <input type="file" name="image" id="image"/>
-				    </div>
+                        <label for="inputName">Название</label>
+                        <input name="name" id="inputName" class="form-control" type="text">
+                    </div>
                 </div>
-                 <button type="submit" class="btn btn-primary">Создать</button>
-	</form>
-</div>
-</div>
+
+                <div class="row">
+                    <div class="form-group col-sm-6">
+                        <label for="description">Описание</label>
+                        <textarea name="comment" class="form-control" id="description" rows="8"></textarea>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-sm-6">
+                        <label for="image">Картинка</label>
+                        <input type="file" name="image" id="image"/>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Создать</button>
+            </form>
+        </div>
+    </div>
 
 
 {% endblock %}
