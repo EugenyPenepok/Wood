@@ -1,1 +1,5 @@
 /wood_site/settings.py
+/wood/migrations/
+.idea/
+wood/__pycache__/
+wood_site/__pycache__/

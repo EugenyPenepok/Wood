@@ -358,7 +358,7 @@ p.copyright {
 .product-title, .rating, .product-description, .price, .vote, .sizes {
     margin-bottom: 15px; }
 
-product-description{
+.product-description{
     font-style: normal;
 }
 
@@ -440,3 +440,13 @@ product-description{
 
 /*# sourceMappingURL=style.css.map */
 /* END OF SNIPPETS CSS*/
+.form{
+    padding: 50px 0 ;
+}
+.btn-add{
+    margin: 20px 10px;
+}
+.box-shadow form{
+    display: inline;
+    padding-right:20px ;
+}
