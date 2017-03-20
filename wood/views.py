@@ -78,3 +78,6 @@ def category_edit(request, category_id):
     else:
         context = {"category": category}
         return render(request, 'editcategory.html', context)
+
+def get_orders(request):
+    return render(request, 'order.html')
