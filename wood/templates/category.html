@@ -2,21 +2,10 @@
 
 {% block rows %}
 {% load static %}
-<!-- Custom CSS -->
-{% comment %}
-<link href="/css/gallery.css" rel="stylesheet">
 
-<!-- Custom Fonts -->
-<link href="/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-<link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
-{% endcomment %}
-
-<!--Шапочка -->
     <div class="catalog-header">
         <div class="col-lg-12">
                 <h1>Продукция</h1>
-                <!-- <h4>Перечень категорий изделий</h4> -->
-
         </div>
     </div>
 
@@ -29,13 +18,16 @@
 
     <!--Gallery catalogs --->
     <div class="container">
-        <div class="row row-margin-bottom">
+        <div class="row lib-panel">
+         <form action="{% url 'category_add' %}">
+            <button class="btn btn-primary btn-add">Добавить категорию</button>
+         </form>
 		{% for cat in category %}
             <div class="col-md-6">
                 <div class="lib-panel">
                     <div class="row box-shadow">
                         <div class="col-md-6">
-                            <img class="lib-img-show" src="../img/category/cat{{cat.id}}.jpg">
+                            <img class="lib-img-show" src="{% static cat.image_path %}">
                         </div>
                         <div class="col-md-6">
                             <div class="lib-row lib-header">
@@ -46,6 +38,12 @@
                                 <p>{{cat.description}}</p>
                             </div>
                         </div>
+                       <form action="{% url 'category_edit' cat.id %}">
+                            <button class="btn btn-success" >Редактировать</button>
+                        </form>
+                        <form action="{% url 'category_delete' cat.id %}">
+                            <button class="btn btn-danger">Удалить</button>
+                        </form>
                     </div>
                 </div>
             </div>
