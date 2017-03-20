@@ -25,16 +25,31 @@ def get_category_content(_request, category_id):
 
 
 def get_product_add(_request, category_id):
-    covers = Coating.objects.all()
-    materials = Material.objects.all()
-    sizes = Size.objects.all()
-    context = {"category_id": category_id, "covers": covers, "materials": materials, "sizes": sizes}
-    return render(_request, 'addproduct.html', context)
-
-
-def save_product(request):
-    product = Product()
-    return None
+    if _request.method == 'GET':
+        covers = Coating.objects.all()
+        materials = Material.objects.all()
+        sizes = Size.objects.all()
+        context = {"category_id": category_id, "covers": covers, "materials": materials, "sizes": sizes}
+        return render(_request, 'addproduct.html', context)
+    elif _request.method == 'POST':
+        category = Category.objects.get(pk=category_id)
+        product = Product(name=_request.POST['name'],
+                          description=_request.POST['comment'],
+                          category_id=category)
+        product.save()
+        material = Material.objects.get(pk=_request.POST['materials'])
+        coating = Coating.objects.get(pk=_request.POST['covers'])
+        size = Size.objects.get(pk=_request.POST['sizes'])
+        concrete_product = ConcreteProduct(product=product,
+                                           material=material,
+                                           coating=coating,
+                                           size=size,
+                                           price=_request.POST['price'],
+                                           number=_request.POST['amount'],
+                                           time_production=_request.POST['time'])
+        concrete_product.save()
+        context = {"category_id": category_id, "product": product}
+        return render(_request, "product.html", context)
 
 
 def category_delete(_request, category_id):
@@ -107,3 +122,9 @@ def get_orders(request):
                                            attachments=real_path)
             personal_order.save()
             return redirect('index')
+
+
+def get_product(request, category_id, product_id):
+    product = Product.objects.get(pk=product_id)
+    context = {'category_id': category_id, 'product': product}
+    return render(request, 'product.html', context)

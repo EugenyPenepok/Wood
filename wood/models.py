@@ -72,11 +72,11 @@ class Client(models.Model):
 # Изделие с конкретными параметрами
 class ConcreteProduct(models.Model):
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=200)
+    #name = models.CharField(max_length=200)
     # Цена в копейках
     price = models.IntegerField()
     number = models.IntegerField()
-    time_production = models.DateTimeField()
+    time_production = models.IntegerField(blank=True, null=True)
     material = models.ForeignKey(Material, on_delete=models.PROTECT)
     coating = models.ForeignKey(Coating, on_delete=models.PROTECT)
     size = models.ForeignKey(Size, on_delete=models.PROTECT)
