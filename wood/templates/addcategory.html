@@ -5,7 +5,7 @@
     <script type="text/javascript" src=" {% static "/js/checkCategory.js" %}"></script>
     <div class="container form">
         <div class="col-xs-12 col-sm-12">
-            <h4>Добавление нового изделия</h4>
+            <h4>Добавление категории</h4>
             <div class="alert alert-danger hidden" id="errorMessage" role="alert"></div>
             <form method="POST" enctype="multipart/form-data" action="{% url 'category_add' %}"  onsubmit="return checkCategory();">
                 {% csrf_token %}
