@@ -33,7 +33,7 @@
             <div class="producttitle">{{prod.Name}}</div>
             <div class="productprice">
                 <div class="pull-right">
-                    <a href="/category/{{category.id}}/product/{{prod.id}}" class="btn btn-primary btn-sm" role="button">Просмотр</a>
+                    <a href="{% url 'product' category.id prod.id %}" class="btn btn-primary btn-sm" role="button">Просмотр</a>
                 </div>
                 <div class="pricetext">{{prod.Price}}<i class="fa fa-ruble fa-fw"></i></div>
             </div>
