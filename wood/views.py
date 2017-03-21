@@ -54,9 +54,8 @@ def get_product_add(_request, category_id):
 
 def category_delete(_request, category_id):
     category = Category.objects.get(pk=category_id)
-    image_path = category.image_path
+    category.image.delete(save=True)
     category.delete()
-    default_storage.delete(path_prefix + image_path)
     return redirect('category')
 
 
@@ -65,12 +64,12 @@ def category_add(request):
         return render(request, 'addcategory.html')
     elif request.method == 'POST':
         image_file = (request.FILES['image'])
-        save_path = "upload/category/" + image_file.name
-        upload_path = default_storage.save(path_prefix + save_path, ContentFile(image_file.read()))
-        real_path = upload_path.split(path_prefix)[1]
+        # save_path = "upload/category/" + image_file.name
+        # upload_path = default_storage.save(path_prefix + save_path, ContentFile(image_file.read()))
+        # real_path = upload_path.split(path_prefix)[1]
         category = Category(name=request.POST['name'],
                             description=request.POST['comment'],
-                            image_path=real_path)
+                            image=image_file)
         category.save()
         return redirect('category')
 
@@ -80,11 +79,8 @@ def category_edit(request, category_id):
     if request.method == 'POST':
         image_file = request.FILES.get('image', False)
         if image_file:
-            default_storage.delete(path_prefix + category.image_path)
-            save_path = "upload/category/" + image_file.name
-            upload_path = default_storage.save(path_prefix + save_path, ContentFile(image_file.read()))
-            real_path = upload_path.split(path_prefix)[1]
-            category.image_path = real_path
+            category.image.delete(save=True)
+            category.image = image_file
         category.name = request.POST['name']
         category.description = request.POST['comment']
         category.save()

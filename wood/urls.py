@@ -11,6 +11,5 @@ urlpatterns = [
     url(r'^category/(?P<category_id>[0-9]+)/edit$', views.category_edit, name='category_edit'),
     url(r'^category/(?P<category_id>[0-9]+)$', views.get_category_content, name='category_content'),
     url(r'^category/(?P<category_id>[0-9]+)/product/(?P<product_id>[0-9]+)$', views.get_product, name='product'),
-    url(r'^category/(?P<category_id>[0-9]+)/product/add$', views.get_product_add, name='product_add')
-
+    url(r'^category/(?P<category_id>[0-9]+)/product/add$', views.get_product_add, name='product_add'),
 ]
