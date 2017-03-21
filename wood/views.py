@@ -1,13 +1,14 @@
 from django.shortcuts import render, redirect
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
+from django.contrib.auth import authenticate, login, logout
 # Create your views here.
 from wood.models import *
 
 path_prefix = 'wood/static/'
 
 
-def get_values(_request):
+def index(_request):
     return render(_request, 'index.html')
 
 
@@ -64,9 +65,6 @@ def category_add(request):
         return render(request, 'addcategory.html')
     elif request.method == 'POST':
         image_file = (request.FILES['image'])
-        # save_path = "upload/category/" + image_file.name
-        # upload_path = default_storage.save(path_prefix + save_path, ContentFile(image_file.read()))
-        # real_path = upload_path.split(path_prefix)[1]
         category = Category(name=request.POST['name'],
                             description=request.POST['comment'],
                             image=image_file)
@@ -125,5 +123,37 @@ def get_product(request, category_id, product_id):
     context = {'category_id': category_id, 'product': product}
     return render(request, 'product.html', context)
 
-def get_reg(_request):
-    return render(_request, 'register.html')
+
+def registration(request):
+    if request.method == 'GET':
+        return render(request, 'register.html')
+    else:
+        user = User.objects.create_user(username=request.POST['username'],
+                                        email=request.POST['email'],
+                                        password=request.POST['password'],
+                                        first_name=request.POST['first_name'],
+                                        last_name=request.POST['last_name'],
+                                        )
+        user.save()
+        client = Client(user=user,
+                        telephone=request.POST['telephone'],
+                        skype=request.POST['skype'],
+                        postcode=request.POST['postcode'],
+                        address=request.POST['address'])
+        client.save()
+        return redirect('index')
+
+
+def login_user(request):
+    if request.method == 'GET':
+        return render(request, 'auth.html')
+    else:
+        user = authenticate(username=request.POST['username'], password=request.POST['password'])
+        if user.is_active:
+            login(request, user)
+        return redirect('index')
+
+
+def logout_user(request):
+    logout(request)
+    return redirect('index')

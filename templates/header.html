@@ -16,8 +16,28 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-right">
+                {% if user.is_authenticated %}
+                    <li>
+                        <a href="#" data-toggle="dropdown" class="dropdown-toggle">
+                            {{ user.first_name }}
+                             <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">Профиль</a></li>
+                            <li>
+                                <a type="button" data-toggle="modal" data-target="#modal_exit">
+                                    Выход
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                {% else %}
+                    <li>
+                         <a href="{% url 'login_user' %}">Вход</a>
+                    </li>
+                {% endif %}
                 <li>
-                     <a href="{% url 'register' %}">Регистрация</a>
+                     <a href="{% url 'registration' %}">Регистрация</a>
                 </li>
                 <li>
                     <a href="/#about">Обо мне</a>
