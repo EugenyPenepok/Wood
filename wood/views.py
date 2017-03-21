@@ -124,3 +124,6 @@ def get_product(request, category_id, product_id):
     product = Product.objects.get(pk=product_id)
     context = {'category_id': category_id, 'product': product}
     return render(request, 'product.html', context)
+
+def get_reg(_request):
+    return render(_request, 'register.html')
