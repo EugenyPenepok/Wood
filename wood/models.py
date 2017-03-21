@@ -15,7 +15,8 @@ class Product(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200)
     description = models.CharField(max_length=2000)
-    category_id = models.ForeignKey(Category, on_delete=models.PROTECT)
+    category = models.ForeignKey(Category, on_delete=models.PROTECT)
+    product_image = models.ImageField(upload_to='images/products/')
 
 
 # Покрытие
