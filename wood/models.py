@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 
 # Категория
 class Category(models.Model):
@@ -54,19 +54,14 @@ class TypeOfDelivery(models.Model):
 # Клиент
 class Client(models.Model):
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=100)
-    surname = models.CharField(max_length=100)
-    patronymic = models.CharField(max_length=100)
-    # username = models.CharField(max_length=100)
-    # password = models.CharField(max_length=100)
-    email = models.CharField(max_length=100)
-    # skype = models.CharField(max_length=100)
+    user = models.ForeignKey(User, unique=True)
     telephone = models.CharField(max_length=100)
-    # address = models.CharField(max_length=1000)
-    # postcode = models.CharField(max_length=30)
+    skype = models.CharField(max_length=100)
+    address = models.CharField(max_length=1000)
+    postcode = models.CharField(max_length=30)
 
     def __str__(self):
-        return self.name + ' ' + self.surname + ' ' + self.patronymic
+        return self.name + ' ' + self.surname
 
 
 # Изделие с конкретными параметрами
