@@ -25,7 +25,7 @@
 
 h1,
 h2 {
-    font-family: Helvetica, 'Lobster', cursive;
+    font-family: 'Lobster', cursive;
     font-weight: 800;
 }
 
@@ -34,7 +34,7 @@ h3,
 h4,
 h5,
 h6 {
-    font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: 'Open Sans', Helvetica, Arial, sans-serif;
     font-weight: 700;
 }
 
