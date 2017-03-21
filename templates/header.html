@@ -23,7 +23,9 @@
                              <b class="caret"></b>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a href="#">Профиль</a></li>
+                            {% if not user.is_superuser %}
+                                <li><a href="#">Профиль</a></li>
+                            {% endif %}
                             <li>
                                 <a type="button" data-toggle="modal" data-target="#modal_exit">
                                     Выход
@@ -35,21 +37,29 @@
                     <li>
                          <a href="{% url 'login_user' %}">Вход</a>
                     </li>
+                    <li>
+                         <a href="{% url 'registration' %}">Регистрация</a>
+                    </li>
                 {% endif %}
                 <li>
-                     <a href="{% url 'registration' %}">Регистрация</a>
+                    <a href="{% url 'category' %}">Каталог</a>
                 </li>
                 <li>
-                    <a href="/#about">Обо мне</a>
-                </li>
-                <li>
-                    <a href="{% url 'category' %}">Галерея</a>
-                </li>
-                <li>
-                    <a href="{% url 'order' %}">Индивидуальный заказ</a>
-                </li>
-                <li>
-                    <a href="/#contact">Связаться</a>
+                    <a href="#" data-toggle="dropdown" class="dropdown-toggle">
+                        Меню
+                        <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="{% url 'order' %}">Индивидуальный заказ</a>
+                        </li>
+                        <li>
+                            <a href="/#about">Обо мне</a>
+                        </li>
+                        <li>
+                            <a href="/#contact">Связаться</a>
+                        </li>
+                    </ul>
                 </li>
                 <li>
 					<a>

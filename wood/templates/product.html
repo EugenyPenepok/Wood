@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 {% block rows %}
+
+{% load static %}
     <!-- Custom CSS -->
     <link href="/css/product.css" rel="stylesheet">
 	
@@ -116,7 +118,7 @@
 
 	<div class = "container">
 		<div class = "row">
-			<img src = "/img/orn_product.png" class="img-responsive center-block" />
+			<img src = "{% static '/img/orn_product.png' %}" class="img-responsive center-block" />
 		</div>
 	</div>
 	
@@ -143,8 +145,8 @@
 
                 </div>
                 <div class="details col-md-6">
-					<h4>Количество изделий на складе: {{ product.Amount }}.</h4>
-                    <p class="product-description">{{ product.Comment }}</p>
+					<h4>Количество изделий на складе: {{ product.amount }}.</h4>
+                    <p class="product-description">{{ product.description }}</p>
                     <div class="form-group">
                         <label for="sizeSelector" class="col-sm-3 control-label">Размер</label>
                         <div class="col-sm-9">
@@ -159,7 +161,7 @@
                         <label for="materialSelector" class="col-sm-3 control-label">Материал</label>
                         <div class="col-sm-9">
                             <select class="form-control" id="materialSelector">
-							{% for m in material %}
+							{% for m in materials %}
                                 <option>{{ m.Name }}</option>
 							{% endfor %}	
                             </select>
