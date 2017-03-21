@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 # Категория
 class Category(models.Model):
     id = models.AutoField(primary_key=True)
@@ -54,7 +55,7 @@ class TypeOfDelivery(models.Model):
 # Клиент
 class Client(models.Model):
     id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(User, unique=True)
+    user = models.OneToOneField(User, unique=True)
     telephone = models.CharField(max_length=100)
     skype = models.CharField(max_length=100)
     address = models.CharField(max_length=1000)
@@ -67,7 +68,7 @@ class Client(models.Model):
 # Изделие с конкретными параметрами
 class ConcreteProduct(models.Model):
     id = models.AutoField(primary_key=True)
-    #name = models.CharField(max_length=200)
+    # name = models.CharField(max_length=200)
     # Цена в копейках
     price = models.IntegerField()
     number = models.IntegerField()
