@@ -7,115 +7,113 @@
             <h1>Зарегистрироваться</h1>
         </div>
     </div>
-        <div class="main-login main-center">
-            <form class="form-horizontal" method="post" action="#">
-
-                <div class="form-group">
-                    <label for="username" class="cols-sm-2 control-label">Username</label>
-                    <div class="cols-sm-10">
-                        <div class="input-group">
-                            <span class="input-group-addon"><i class="fa fa-users fa" aria-hidden="true"></i></span>
-                            <input type="text" class="form-control" name="username" id="username"  placeholder="Введите Ваш username"/>
-                        </div>
+    <div class="main-login main-center">
+        <form class="form-horizontal" method="post" action="{% url 'registration' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="username" class="cols-sm-2 control-label">Username</label>
+                <div class="cols-sm-10">
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-users fa" aria-hidden="true"></i></span>
+                        <input type="text" class="form-control" name="username" id="username"  placeholder="Введите Ваш username"/>
                     </div>
                 </div>
+            </div>
 
-                <div class="form-group">
-                    <label for="password" class="cols-sm-2 control-label">Пароль</label>
-                    <div class="cols-sm-10">
-                        <div class="input-group">
-                            <span class="input-group-addon"><i class="fa fa-lock fa-lg" aria-hidden="true"></i></span>
-                            <input type="password" class="form-control" name="password" id="password"  placeholder="Введите Ваш пароль"/>
-                        </div>
+            <div class="form-group">
+                <label for="password" class="cols-sm-2 control-label">Пароль</label>
+                <div class="cols-sm-10">
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-lock fa-lg" aria-hidden="true"></i></span>
+                        <input type="password" class="form-control" name="password" id="password"  placeholder="Введите Ваш пароль"/>
                     </div>
                 </div>
+            </div>
 
-                <div class="form-group">
-                    <label for="confirm" class="cols-sm-2 control-label">Подтверждение пароля</label>
-                    <div class="cols-sm-10">
-                        <div class="input-group">
-                            <span class="input-group-addon"><i class="fa fa-lock fa-lg" aria-hidden="true"></i></span>
-                            <input type="password" class="form-control" name="confirm" id="confirm"  placeholder="Введите пароль еще раз"/>
-                        </div>
+            <div class="form-group">
+                <label for="confirm" class="cols-sm-2 control-label">Подтверждение пароля</label>
+                <div class="cols-sm-10">
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-lock fa-lg" aria-hidden="true"></i></span>
+                        <input type="password" class="form-control" name="confirm" id="confirm"  placeholder="Введите пароль еще раз"/>
                     </div>
                 </div>
+            </div>
 
-                <div class="form-group">
-                    <label for="name" class="cols-sm-2 control-label">Фамилия</label>
-                    <div class="cols-sm-10">
-                        <div class="input-group">
-                            <span class="input-group-addon"><i class="fa fa-user fa" aria-hidden="true"></i></span>
-                            <input type="text" class="form-control" name="last_name" id="last_name"  placeholder="Введите Вашу фамилию"/>
-                        </div>
+            <div class="form-group">
+                <label for="name" class="cols-sm-2 control-label">Фамилия</label>
+                <div class="cols-sm-10">
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-user fa" aria-hidden="true"></i></span>
+                        <input type="text" class="form-control" name="last_name" id="last_name"  placeholder="Введите Вашу фамилию"/>
                     </div>
                 </div>
+            </div>
 
-                <div class="form-group">
-                    <label for="name" class="cols-sm-2 control-label">Имя</label>
-                    <div class="cols-sm-10">
-                        <div class="input-group">
-                            <span class="input-group-addon"><i class="fa fa-user fa" aria-hidden="true"></i></span>
-                            <input type="text" class="form-control" name="first_name" id="first_name"  placeholder="Введите Ваше имя"/>
-                        </div>
+            <div class="form-group">
+                <label for="name" class="cols-sm-2 control-label">Имя</label>
+                <div class="cols-sm-10">
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-user fa" aria-hidden="true"></i></span>
+                        <input type="text" class="form-control" name="first_name" id="first_name"  placeholder="Введите Ваше имя"/>
                     </div>
                 </div>
+            </div>
 
-                <div class="form-group">
-                    <label for="email" class="cols-sm-2 control-label">Email</label>
-                    <div class="cols-sm-10">
-                        <div class="input-group">
-                            <span class="input-group-addon"><i class="fa fa-envelope fa" aria-hidden="true"></i></span>
-                            <input type="text" class="form-control" name="email" id="email"  placeholder="Введите адрес Вашей электронной почты"/>
-                        </div>
+            <div class="form-group">
+                <label for="email" class="cols-sm-2 control-label">Email</label>
+                <div class="cols-sm-10">
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-envelope fa" aria-hidden="true"></i></span>
+                        <input type="text" class="form-control" name="email" id="email"  placeholder="Введите адрес Вашей электронной почты"/>
                     </div>
                 </div>
+            </div>
 
-                <div class="form-group">
-                    <label for="email" class="cols-sm-2 control-label">Skype</label>
-                    <div class="cols-sm-10">
-                        <div class="input-group">
-                            <span class="input-group-addon"><i class="fa fa-skype fa" aria-hidden="true"></i></span>
-                            <input type="text" class="form-control" name="skype" id="skype"  placeholder="Введите Ваш логин Skype"/>
-                        </div>
+            <div class="form-group">
+                <label for="email" class="cols-sm-2 control-label">Skype</label>
+                <div class="cols-sm-10">
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-skype fa" aria-hidden="true"></i></span>
+                        <input type="text" class="form-control" name="skype" id="skype"  placeholder="Введите Ваш логин Skype"/>
                     </div>
                 </div>
+            </div>
 
-                <div class="form-group">
-                    <label for="email" class="cols-sm-2 control-label">Телефон</label>
-                    <div class="cols-sm-10">
-                        <div class="input-group">
-                            <span class="input-group-addon"><i class="fa fa-phone fa" aria-hidden="true"></i></span>
-                            <input type="text" class="form-control" name="telephone" id="telephone"  placeholder="Введите Ваш телефон"/>
-                        </div>
+            <div class="form-group">
+                <label for="email" class="cols-sm-2 control-label">Телефон</label>
+                <div class="cols-sm-10">
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-phone fa" aria-hidden="true"></i></span>
+                        <input type="text" class="form-control" name="telephone" id="telephone"  placeholder="Введите Ваш телефон"/>
                     </div>
                 </div>
+            </div>
 
-                <div class="form-group">
-                    <label for="email" class="cols-sm-2 control-label">Почтовый индекс</label>
-                    <div class="cols-sm-10">
-                        <div class="input-group">
-                            <span class="input-group-addon"><i class="fa fa-inbox fa" aria-hidden="true"></i></span>
-                            <input type="text" class="form-control" name="postcode" id="postcode"  placeholder="Введите Ваш почтовый индекс"/>
-                        </div>
+            <div class="form-group">
+                <label for="email" class="cols-sm-2 control-label">Почтовый индекс</label>
+                <div class="cols-sm-10">
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-inbox fa" aria-hidden="true"></i></span>
+                        <input type="text" class="form-control" name="postcode" id="postcode"  placeholder="Введите Ваш почтовый индекс"/>
                     </div>
                 </div>
+            </div>
 
-                <div class="form-group">
-                    <label for="email" class="cols-sm-2 control-label">Адрес</label>
-                    <div class="cols-sm-10">
-                        <div class="input-group">
-                            <span class="input-group-addon"><i class="fa fa-home fa" aria-hidden="true"></i></span>
-                            <input type="text" class="form-control" name="address" id="address"  placeholder="Введите Ваш адрес"/>
-                        </div>
+            <div class="form-group">
+                <label for="email" class="cols-sm-2 control-label">Адрес</label>
+                <div class="cols-sm-10">
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-home fa" aria-hidden="true"></i></span>
+                        <input type="text" class="form-control" name="address" id="address"  placeholder="Введите Ваш адрес"/>
                     </div>
                 </div>
+            </div>
 
-                <div class="form-group ">
-                    <button type="button" class="btn btn-primary btn-lg btn-block login-button">Регистрация</button>
-                </div>
-            </form>
-        </div>
+            <div class="form-group ">
+                <button type="submit" class="btn btn-primary btn-lg btn-block login-button">Регистрация</button>
+            </div>
+      </form>
     </div>
 </div>
-
 {% endblock %}
