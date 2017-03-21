@@ -26,21 +26,19 @@
                     <hr>
                     <form class="form-group" enctype="multipart/form-data" method="POST" action="{% url 'order' %}">
                         {% csrf_token %}
-                        <label for="fam" class="required">Фамилия:</label>
-                        <input required="true" type="text" class="form-control" name="surname" id="fam">
+                        {% if not user.is_authenticated  %}
+                            <label for="fam" class="required">Фамилия:</label>
+                            <input required="true" type="text" class="form-control" name="surname" id="fam">
 
-                        <label for="name" class="required">Имя:</label>
-                        <input required="true" type="text" class="form-control" name="name" id="name">
+                            <label for="name" class="required">Имя:</label>
+                            <input required="true" type="text" class="form-control" name="name" id="name">
 
-                        <label for="otch" class="required">Отчество:</label>
-                        <input type="text" required="true" class="form-control" name="patronymic" id="otch">
+                            <label for="email" class="required">E-mail:</label>
+                            <input required="true" type="email" class="form-control" name="email" id="email">
 
-                        <label for="email" class="required">E-mail:</label>
-                        <input required="true" type="email" class="form-control" name="email" id="email">
-
-                        <label for="telefon" class="required">Номер телефона:</label>
-                        <input required="true" type="tel" class="form-control" name="telephone" id="telefon">
-
+                            <label for="telefon" class="required">Номер телефона:</label>
+                            <input required="true" type="tel" class="form-control" name="telephone" id="telefon">
+                        {% endif %}
                         <label for="info" class="required">Опишите требования к заказу:</label>
                         <textarea required="true" class="form-control " name="requirements" rows="5" id="info"></textarea>
 

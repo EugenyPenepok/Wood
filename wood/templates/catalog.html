@@ -19,14 +19,16 @@
     <!--Gallery catalogs --->
     <div class="container">
         <div class="row lib-panel">
-         <form action="{% url 'category_add' %}">
-            <button class="btn btn-primary btn-add">Добавить категорию</button>
-         </form>
-		{% for cat in category %}
+        {% if user.is_superuser %}
+            <form action="{% url 'category_add' %}">
+                <button class="btn btn-primary btn-add">Добавить категорию</button>
+            </form>
+        {% endif %}
+		{% for cat in categories %}
             <div class="col-md-6">
                 <div class="lib-panel">
                     <div class="row box-shadow">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             {% load staticfiles %}
                             <img class="lib-img-show" src="{{ cat.image.url }}">
                         </div>
@@ -39,12 +41,15 @@
                                 <p>{{cat.description}}</p>
                             </div>
                         </div>
-                       <form action="{% url 'category_edit' cat.id %}">
-                            <button class="btn btn-success" >Редактировать</button>
-                        </form>
-                        <form action="{% url 'category_delete' cat.id %}">
-                            <button class="btn btn-danger">Удалить</button>
-                        </form>
+                        {% if user.is_superuser %}
+                            <form action="{% url 'category_edit' cat.id %}">
+                                <button class="btn btn-success" >Редактировать</button>
+                            </form>
+                            <form action="{% url 'category_delete' cat.id %}">
+                                <button class="btn btn-danger">Удалить</button>
+                            </form>
+                        {% endif %}
+
                     </div>
                 </div>
             </div>

@@ -222,7 +222,6 @@ h6 {
 }
 
 .lib-panel img {
-    width: 100%;
     background-color: transparent;
 }
 
@@ -512,5 +511,6 @@ p.copyright {
 }
 
 .lib-img-show {
+    width: 150px;
     height: 150px;
 }

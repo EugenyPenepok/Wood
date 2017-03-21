@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block rows %}
 
+{% load static %}
 
     <!--Шапочка -->
 <div class="catalog-header" xmlns="http://www.w3.org/1999/html">
@@ -11,14 +12,16 @@
 </div>
 <div class = "container">
     <div class = "row">
-        <img src = "/img/orn_cat.png" class="img-responsive center-block" />
+        <img src = "{% static '/img/orn_cat.png' %}" class="img-responsive center-block" />
     </div>
 	<div class = "row">
-        <form action="{% url 'product_add' category.id %}">
-        <button type="submit" class="btn btn-default" href="{% url 'product_add' category.id %}" />
-		Добавить
-		</button>
-        </form>
+        {% if user.is_superuser %}
+            <form action="{% url 'product_create' category.id %}">
+                <button type="submit" class="btn btn-default">
+                    Добавить
+                </button>
+            </form>
+        {% endif %}
     </div>
 </div>
 
@@ -26,11 +29,12 @@
 <!-- Items -->
 <div class="container">
     <div class="row row-margin-bottom">
-		{% for prod in product %}
+		{% for prod in products %}
         <div class="col-md-3 column productbox">
             <!-- Размер изображения 460x250 -->
-            <img src="/img/product/prod{{prod.id}}.jpg" class="img-responsive center-block">
-            <div class="producttitle">{{prod.Name}}</div>
+            {% load staticfiles %}
+            <img src="{{ prod.product_image.url }}" class="img-responsive center-block">
+            <div class="producttitle">{{prod.name}}</div>
             <div class="productprice">
                 <div class="pull-right">
                     <a href="{% url 'product' category.id prod.id %}" class="btn btn-primary btn-sm" role="button">Просмотр</a>

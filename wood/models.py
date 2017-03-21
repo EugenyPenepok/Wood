@@ -15,7 +15,8 @@ class Product(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200)
     description = models.CharField(max_length=2000)
-    category_id = models.ForeignKey(Category, on_delete=models.PROTECT)
+    category = models.ForeignKey(Category, on_delete=models.PROTECT)
+    product_image = models.ImageField(upload_to='images/products/')
 
 
 # Покрытие
@@ -72,7 +73,7 @@ class ConcreteProduct(models.Model):
     # Цена в копейках
     price = models.IntegerField()
     number = models.IntegerField()
-    # time_production = models.IntegerField(blank=True, null=True)
+    time_production = models.IntegerField(blank=True, null=True)
     material = models.ForeignKey(Material, on_delete=models.PROTECT)
     coating = models.ForeignKey(Coating, on_delete=models.PROTECT)
     size = models.ForeignKey(Size, on_delete=models.PROTECT)
