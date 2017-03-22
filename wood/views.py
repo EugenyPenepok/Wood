@@ -37,13 +37,6 @@ def create_category(request):
         return redirect('get_categories')
 
 
-def delete_category(request, category_id):
-    category = Category.objects.get(pk=category_id)
-    category.image.delete(save=True)
-    category.delete()
-    return redirect('get_categories')
-
-
 def edit_category(request, category_id):
     category = Category.objects.get(pk=category_id)
     if request.method == 'POST':
@@ -60,33 +53,11 @@ def edit_category(request, category_id):
         return render(request, 'edit_category.html', context)
 
 
-'''def product_add(request, category_id):
-    if request.method == 'GET':
-        covers = Coating.objects.all()
-        materials = Material.objects.all()
-        sizes = Size.objects.all()
-        context = {"category_id": category_id, "covers": covers, "materials": materials, "sizes": sizes}
-        return render(request, 'create_product.html', context)
-    elif request.method == 'POST':
-        category = Category.objects.get(pk=category_id)
-        product = Product(name=request.POST['name'],
-                          description=request.POST['comment'],
-                          category_id=category)
-        product.save()
-        # material = Material.objects.get(pk=request.POST['materials'])
-        # coating = Coating.objects.get(pk=request.POST['covers'])
-        # size = Size.objects.get(pk=request.POST['sizes'])
-        # concrete_product = ConcreteProduct(product=product,
-                                           # material=material,
-                                           # coating=coating,
-                                           # size=size,
-                                           # price=request.POST['price'],
-                                           # number=request.POST['amount'],
-                                           # time_production=request.POST['time'])
-        # concrete_product.save()
-        context = {"category_id": category_id, "product": product}
-        return render(request, "view_product.html", context)
-'''
+def delete_category(request, category_id):
+    category = Category.objects.get(pk=category_id)
+    category.image.delete(save=True)
+    category.delete()
+    return redirect('get_categories')
 
 
 def create_product(request, category_id):
@@ -179,6 +150,47 @@ def create_personal_order(request):
         return redirect('index')
 
 
+def create_material(request):
+    if request.method == 'GET':
+        return render(request, 'create_material.html')
+    elif request.method == 'POST':
+        material = Material(name=request.POST['name'],
+                            description=request.POST['description'],
+                            amount=request.POST['amount'])
+        material.save()
+        return redirect('get_categories')
+
+
+def create_coating(request):
+    if request.method == 'GET':
+        return render(request, 'create_coating.html')
+    elif request.method == 'POST':
+        coating = Coating(name=request.POST['name'],
+                            description=request.POST['description'])
+        coating.save()
+        return redirect('get_categories')
+
+
+def create_size(request):
+    if request.method == 'GET':
+        return render(request, 'create_size.html')
+    elif request.method == 'POST':
+        size = Size(length=request.POST['length'],
+                    width=request.POST['width'],
+                    height=request.POST['height'],
+                    weight=request.POST['weight'])
+        size.save()
+        return redirect('get_categories')
+
+
+def view_profile(request):
+    return render(request, 'view_profile.html')
+
+
+def view_orders(request):
+    return render(request, 'view_orders.html')
+
+
 def registration(request):
     if request.method == 'GET':
         return render(request, 'create_user.html')
@@ -211,47 +223,12 @@ def logout_user(request):
     return redirect('index')
 
 
-def ajax_info_about_product(request, category_id, product_id):
-    name_material = request.GET['material']
+def ajax_update_product(request, category_id, product_id):
+    '''name_material = request.GET['material']
     material = Material.objects.get(name=name_material)
     product = Product.objects.get(pk=product_id)
     concrete_products = ConcreteProduct.objects.filter(material=material).filter(product=product)
+    '''
     data = dict()
-    if concrete_products:
-        data['form_is_valid'] = True
-    else:
-        data['none'] = True
+    data['form_is_valid'] = True
     return JsonResponse(data)
-
-
-def create_material(request):
-    if request.method == 'GET':
-        return render(request, 'create_material.html')
-    elif request.method == 'POST':
-        material = Material(name=request.POST['name'],
-                            description=request.POST['description'],
-                            amount=request.POST['amount'])
-        material.save()
-        return redirect('get_categories')
-
-
-def create_coating(request):
-    if request.method == 'GET':
-        return render(request, 'create_coating.html')
-    elif request.method == 'POST':
-        coating = Coating(name=request.POST['name'],
-                            description=request.POST['description'])
-        coating.save()
-        return redirect('get_categories')
-
-
-def create_size(request):
-    if request.method == 'GET':
-        return render(request, 'create_size.html')
-    elif request.method == 'POST':
-        size = Size(length=request.POST['length'],
-                    width=request.POST['width'],
-                    height=request.POST['height'],
-                    weight=request.POST['weight'])
-        size.save()
-        return redirect('get_categories')
