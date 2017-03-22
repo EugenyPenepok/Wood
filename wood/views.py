@@ -7,8 +7,6 @@ from django.http import JsonResponse
 # Create your views here.
 from wood.models import *
 
-path_prefix = 'wood/static/'
-
 
 def index(request):
     return render(request, 'index.html')
@@ -17,26 +15,19 @@ def index(request):
 def get_categories(request):
     categories = Category.objects.all()
     context = {"categories": categories}
-    return render(request, "catalog.html", context)
+    return render(request, "view_catalog.html", context)
 
 
 def get_products_in_category(request, category_id):
     category = Category.objects.get(pk=category_id)
     products = Product.objects.filter(category_id=category_id)
     context = {"products": products, "category": category}
-    return render(request, "products_in_category.html", context)
+    return render(request, "view_products_in_category.html", context)
 
 
-def category_delete(request, category_id):
-    category = Category.objects.get(pk=category_id)
-    category.image.delete(save=True)
-    category.delete()
-    return redirect('get_categories')
-
-
-def category_add(request):
+def create_category(request):
     if request.method == 'GET':
-        return render(request, 'addcategory.html')
+        return render(request, 'create_category.html')
     elif request.method == 'POST':
         image_file = request.FILES['image']
         category = Category(name=request.POST['name'],
@@ -46,7 +37,14 @@ def category_add(request):
         return redirect('get_categories')
 
 
-def category_edit(request, category_id):
+def delete_category(request, category_id):
+    category = Category.objects.get(pk=category_id)
+    category.image.delete(save=True)
+    category.delete()
+    return redirect('get_categories')
+
+
+def edit_category(request, category_id):
     category = Category.objects.get(pk=category_id)
     if request.method == 'POST':
         image_file = request.FILES.get('image', False)
@@ -59,7 +57,7 @@ def category_edit(request, category_id):
         return redirect('get_categories')
     else:
         context = {"category": category}
-        return render(request, 'editcategory.html', context)
+        return render(request, 'edit_category.html', context)
 
 
 '''def product_add(request, category_id):
@@ -68,7 +66,7 @@ def category_edit(request, category_id):
         materials = Material.objects.all()
         sizes = Size.objects.all()
         context = {"category_id": category_id, "covers": covers, "materials": materials, "sizes": sizes}
-        return render(request, 'product_add.html', context)
+        return render(request, 'create_product.html', context)
     elif request.method == 'POST':
         category = Category.objects.get(pk=category_id)
         product = Product(name=request.POST['name'],
@@ -87,14 +85,14 @@ def category_edit(request, category_id):
                                            # time_production=request.POST['time'])
         # concrete_product.save()
         context = {"category_id": category_id, "product": product}
-        return render(request, "product.html", context)
+        return render(request, "view_product.html", context)
 '''
 
 
-def product_create(request, category_id):
+def create_product(request, category_id):
     if request.method == 'GET':
         context = {"category_id": category_id}
-        return render(request, 'product_add.html', context  )
+        return render(request, 'create_product.html', context)
     elif request.method == 'POST':
         image_file = request.FILES['image']
         category = Category.objects.get(pk=category_id)
@@ -104,36 +102,6 @@ def product_create(request, category_id):
                             product_image=image_file)
         product.save()
         return redirect('get_categories')
-
-
-def get_orders(request):
-    if request.method == 'GET':
-        return render(request, 'order.html')
-    elif request.method == 'POST':
-        client = Client.objects.filter(name=request.POST['name'],
-                                       surname=request.POST['surname'],
-                                       patronymic=request.POST['patronymic'],
-                                       telephone=request.POST['telephone'],
-                                       email=request.POST['email'])
-        if not client:
-            client = Client(name=request.POST['name'],
-                            surname=request.POST['surname'],
-                            patronymic=request.POST['patronymic'],
-                            telephone=request.POST['telephone'],
-                            email=request.POST['email'])
-            client.save()
-        else:
-            client = client[0]
-        file = (request.FILES['attachments'])
-        if client:
-            save_path = "upload/personal_orders/" + file.name
-            upload_path = default_storage.save(path_prefix + save_path, ContentFile(file.read()))
-            real_path = upload_path.split(path_prefix)[1]
-            personal_order = PersonalOrder(client=client,
-                                           requirements=request.POST['requirements'],
-                                           attachments=real_path)
-            personal_order.save()
-            return redirect('index')
 
 
 def get_product(request, category_id, product_id):
@@ -156,10 +124,10 @@ def get_product(request, category_id, product_id):
                'sizes': sizes,
                'coatings': coatings,
                }
-    return render(request, 'product.html', context)
+    return render(request, 'view_product.html', context)
 
 
-def concrete_product_create(request, category_id, product_id):
+def create_concrete_product(request, category_id, product_id):
     if request.method == 'GET':
         materials = Material.objects.all()
         sizes = Size.objects.all()
@@ -170,7 +138,7 @@ def concrete_product_create(request, category_id, product_id):
                    'sizes': sizes,
                    'coatings': coatings
                    }
-        return render(request, 'concrete_product_create.html', context)
+        return render(request, 'create_concrete_product.html', context)
     elif request.method == 'POST':
         product = Product.objects.get(pk=product_id)
         material = Material.objects.get(pk=request.POST['materials'])
@@ -187,9 +155,33 @@ def concrete_product_create(request, category_id, product_id):
         return redirect('get_categories')
 
 
+def create_personal_order(request):
+    if request.method == 'GET':
+        return render(request, 'create_personal_order.html')
+    elif request.method == 'POST':
+        if not request.user.is_anonymous():
+            client = Client.objects.get(user=request.user)
+        else:
+            user = User.objects.create_user(username=request.POST['email'],
+                                            email=request.POST['email'],
+                                            password='change_pass',
+                                            first_name=request.POST['name'],
+                                            last_name=request.POST['surname'],
+                                            )
+            user.save()
+            client = Client(user=user, telephone=request.POST['telephone'])
+            client.save()
+        file = request.FILES['attachments']
+        personal_order = PersonalOrder(client=client,
+                                       requirements=request.POST['requirements'],
+                                       attachments=file)
+        personal_order.save()
+        return redirect('index')
+
+
 def registration(request):
     if request.method == 'GET':
-        return render(request, 'register.html')
+        return render(request, 'create_user.html')
     else:
         user = User.objects.create_user(username=request.POST['username'],
                                         email=request.POST['email'],
@@ -208,13 +200,10 @@ def registration(request):
 
 
 def login_user(request):
-    if request.method == 'GET':
-        return render(request, 'auth.html')
-    else:
-        user = authenticate(username=request.POST['username'], password=request.POST['password'])
-        if user.is_active:
-            login(request, user)
-        return redirect('index')
+    user = authenticate(username=request.POST['username'], password=request.POST['password'])
+    if user.is_active:
+        login(request, user)
+    return redirect('index')
 
 
 def logout_user(request):
@@ -235,9 +224,9 @@ def ajax_info_about_product(request, category_id, product_id):
     return JsonResponse(data)
 
 
-def material_create(request):
+def create_material(request):
     if request.method == 'GET':
-        return render(request, 'material_create.html')
+        return render(request, 'create_material.html')
     elif request.method == 'POST':
         material = Material(name=request.POST['name'],
                             description=request.POST['description'],
@@ -246,9 +235,9 @@ def material_create(request):
         return redirect('get_categories')
 
 
-def coating_create(request):
+def create_coating(request):
     if request.method == 'GET':
-        return render(request, 'coating_create.html')
+        return render(request, 'create_coating.html')
     elif request.method == 'POST':
         coating = Coating(name=request.POST['name'],
                             description=request.POST['description'])
@@ -256,9 +245,9 @@ def coating_create(request):
         return redirect('get_categories')
 
 
-def size_create(request):
+def create_size(request):
     if request.method == 'GET':
-        return render(request, 'size_create.html')
+        return render(request, 'create_size.html')
     elif request.method == 'POST':
         size = Size(length=request.POST['length'],
                     width=request.POST['width'],

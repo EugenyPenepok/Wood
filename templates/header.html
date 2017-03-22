@@ -25,6 +25,7 @@
                         <ul class="dropdown-menu">
                             {% if not user.is_superuser %}
                                 <li><a href="#">Профиль</a></li>
+                                <li><a href="#">Мои заказы</a></li>
                             {% else %}
                                 <li><a href="{% url 'material_create' %}">Материалы</a></li>
                                 <li><a href="{% url 'coating_create' %}">Покрытия</a></li>
@@ -32,7 +33,7 @@
                             {% endif %}
 
                             <li>
-                                <a type="button" data-toggle="modal" data-target="#modal_exit">
+                                <a type="button" data-toggle="modal" data-target="#modal_logout">
                                     Выход
                                 </a>
                             </li>
@@ -40,7 +41,9 @@
                     </li>
                 {% else %}
                     <li>
-                         <a href="{% url 'login_user' %}">Вход</a>
+                        <a type="button" data-toggle="modal" data-target="#modal_login">
+                            Вход
+                        </a>
                     </li>
                     <li>
                          <a href="{% url 'registration' %}">Регистрация</a>
@@ -57,7 +60,7 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li>
-                            <a href="{% url 'order' %}">Индивидуальный заказ</a>
+                            <a href="{% url 'create_personal_order' %}">Индивидуальный заказ</a>
                         </li>
                         <li>
                             <a href="/#contact">Обратная связь</a>
