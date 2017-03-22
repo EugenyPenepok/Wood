@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.contrib.auth import authenticate, login, logout
-from django.core import serializers
 from django.http import JsonResponse
 
 # Create your views here.
@@ -225,17 +224,11 @@ def logout_user(request):
 
 
 def ajax_update_product(request, category_id, product_id):
-    data = dict()
-    name_material = request.GET['name_material']
+    '''name_material = request.GET['material']
     material = Material.objects.get(name=name_material)
     product = Product.objects.get(pk=product_id)
     concrete_products = ConcreteProduct.objects.filter(material=material).filter(product=product)
-    if concrete_products:
-        sizes = Size.objects.filter(concreteproduct__material=material).filter(concreteproduct__product=product)
-        coatings = Coating.objects.filter(concreteproduct__material=material).filter(concreteproduct__product=product)
-        data['form_is_valid'] = True
-        data['sizes'] = serializers.serialize("json", sizes)
-        data['coatings'] = serializers.serialize("json", coatings)
-    else:
-        data['none'] = True
+    '''
+    data = dict()
+    data['form_is_valid'] = True
     return JsonResponse(data)
