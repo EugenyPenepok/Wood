@@ -36,7 +36,7 @@ def category_delete(request, category_id):
 
 def category_add(request):
     if request.method == 'GET':
-        return render(request, 'addcategory.html')
+        return render(request, 'create_category.html')
     elif request.method == 'POST':
         image_file = request.FILES['image']
         category = Category(name=request.POST['name'],
@@ -59,7 +59,7 @@ def category_edit(request, category_id):
         return redirect('get_categories')
     else:
         context = {"category": category}
-        return render(request, 'editcategory.html', context)
+        return render(request, 'edit_category.html', context)
 
 
 '''def product_add(request, category_id):
@@ -68,7 +68,7 @@ def category_edit(request, category_id):
         materials = Material.objects.all()
         sizes = Size.objects.all()
         context = {"category_id": category_id, "covers": covers, "materials": materials, "sizes": sizes}
-        return render(request, 'product_add.html', context)
+        return render(request, 'create_product.html', context)
     elif request.method == 'POST':
         category = Category.objects.get(pk=category_id)
         product = Product(name=request.POST['name'],
@@ -94,7 +94,7 @@ def category_edit(request, category_id):
 def product_create(request, category_id):
     if request.method == 'GET':
         context = {"category_id": category_id}
-        return render(request, 'product_add.html', context  )
+        return render(request, 'create_product.html', context)
     elif request.method == 'POST':
         image_file = request.FILES['image']
         category = Category.objects.get(pk=category_id)
@@ -108,7 +108,7 @@ def product_create(request, category_id):
 
 def get_orders(request):
     if request.method == 'GET':
-        return render(request, 'order.html')
+        return render(request, 'create_personal_order.html')
     elif request.method == 'POST':
         client = Client.objects.filter(name=request.POST['name'],
                                        surname=request.POST['surname'],
@@ -170,7 +170,7 @@ def concrete_product_create(request, category_id, product_id):
                    'sizes': sizes,
                    'coatings': coatings
                    }
-        return render(request, 'concrete_product_create.html', context)
+        return render(request, 'create_concrete_product.html', context)
     elif request.method == 'POST':
         product = Product.objects.get(pk=product_id)
         material = Material.objects.get(pk=request.POST['materials'])
@@ -189,7 +189,7 @@ def concrete_product_create(request, category_id, product_id):
 
 def registration(request):
     if request.method == 'GET':
-        return render(request, 'register.html')
+        return render(request, 'create_user.html')
     else:
         user = User.objects.create_user(username=request.POST['username'],
                                         email=request.POST['email'],
@@ -237,7 +237,7 @@ def ajax_info_about_product(request, category_id, product_id):
 
 def material_create(request):
     if request.method == 'GET':
-        return render(request, 'material_create.html')
+        return render(request, 'create_material.html')
     elif request.method == 'POST':
         material = Material(name=request.POST['name'],
                             description=request.POST['description'],
@@ -248,7 +248,7 @@ def material_create(request):
 
 def coating_create(request):
     if request.method == 'GET':
-        return render(request, 'coating_create.html')
+        return render(request, 'create_coating.html')
     elif request.method == 'POST':
         coating = Coating(name=request.POST['name'],
                             description=request.POST['description'])
@@ -258,7 +258,7 @@ def coating_create(request):
 
 def size_create(request):
     if request.method == 'GET':
-        return render(request, 'size_create.html')
+        return render(request, 'create_size.html')
     elif request.method == 'POST':
         size = Size(length=request.POST['length'],
                     width=request.POST['width'],

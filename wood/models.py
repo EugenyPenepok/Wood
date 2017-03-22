@@ -110,5 +110,5 @@ class PositionInOrder(models.Model):
 class PersonalOrder(models.Model):
     id = models.AutoField(primary_key=True)
     requirements = models.CharField(max_length=5000)
-    attachments = models.CharField(max_length=1000)
+    attachments = models.FileField(upload_to='archives/personal_orders/')
     client = models.ForeignKey(Client, on_delete=models.PROTECT)
