@@ -46,5 +46,6 @@ urlpatterns = [
     url(r'^orders/view$', views.view_orders, name='view_orders'),
 
     url(r'^profile/change_password', views.change_password, name='change_password'),
+    url(r'^order/(?P<order_id>[0-9]+)/attachments', views.download_attachments, name='download_attachments'),
 
 ]

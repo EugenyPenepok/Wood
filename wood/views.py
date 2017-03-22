@@ -1,13 +1,15 @@
+import os
+
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.db import transaction
 from django.db.models import ProtectedError
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 
 from wood.models import *
+from wood_site.settings import STATIC_URL
 
 
 def index(request):
@@ -214,7 +216,10 @@ def view_profile(request):
 
 
 def view_orders(request):
-    return render(request, 'view_orders.html')
+    client = Client.objects.get(user=request.user)
+    orders = PersonalOrder.objects.filter(client=client)
+    context = {'orders': orders}
+    return render(request, 'view_orders.html', context)
 
 
 def registration(request):
@@ -379,3 +384,13 @@ def change_password(request):
 
 def error(request, error_message):
     return render(request, 'error_page.html', context={'error_message': error_message})
+
+
+def download_attachments(request, order_id):
+    order = PersonalOrder.objects.get(pk=order_id)
+
+    file_path = order.attachments.url[1:]
+    with open(file_path, 'rb') as fh:
+        response = HttpResponse(fh.read(), content_type="application/")
+        response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
+        return response
