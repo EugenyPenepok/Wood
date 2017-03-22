@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 {% block rows %}
+
+{% load static %}
     <!-- Custom CSS -->
     <link href="/css/product.css" rel="stylesheet">
 	
@@ -116,7 +118,7 @@
 
 	<div class = "container">
 		<div class = "row">
-			<img src = "/img/orn_product.png" class="img-responsive center-block" />
+			<img src = "{% static '/img/orn_product.png' %}" class="img-responsive center-block" />
 		</div>
 	</div>
 	
@@ -127,24 +129,38 @@
                 <div class="preview col-md-6">
 
                     <div class="preview-pic tab-content">
-                        <div class="tab-pane active" id="pic-1"><img src="/img/product/prod{{product.id}}/1.jpg" /></div>
-                        <div class="tab-pane" id="pic-2"><img src="/img/product/prod{{product.id}}/2.jpg" /></div>
+                        {% load staticfiles %}
+                        <div class="tab-pane active" id="pic-1"><img src="{{ product.product_image.url }}" /></div>
+                        <!--div class="tab-pane" id="pic-2"><img src="/img/product/prod{{product.id}}/2.jpg" /></div>
                         <div class="tab-pane" id="pic-3"><img src="/img/product/prod{{product.id}}/3.jpg" /></div>
                         <div class="tab-pane" id="pic-4"><img src="/img/product/prod{{product.id}}/4.jpg" /></div>
-                        <div class="tab-pane" id="pic-5"><img src="/img/product/prod{{product.id}}/5.jpg" /></div>
+                        <div class="tab-pane" id="pic-5"><img src="/img/product/prod{{product.id}}/5.jpg" /></div-->
                     </div>
-                    <ul class="preview-thumbnail nav nav-tabs">
+                    <!--ul class="preview-thumbnail nav nav-tabs">
                         <li class="active"><a data-target="#pic-1" data-toggle="tab"><img src="/img/product/prod{{product.id}}/1.jpg" /></a></li>
                         <li><a data-target="#pic-2" data-toggle="tab"><img src="/img/product/prod{{product.id}}/2.jpg" /></a></li>
                         <li><a data-target="#pic-3" data-toggle="tab"><img src="/img/product/prod{{product.id}}/3.jpg" /></a></li>
                         <li><a data-target="#pic-4" data-toggle="tab"><img src="/img/product/prod{{product.id}}/4.jpg" /></a></li>
                         <li><a data-target="#pic-5" data-toggle="tab"><img src="/img/product/prod{{product.id}}/5.jpg" /></a></li>
-                    </ul>
+                    </ul-->
+
 
                 </div>
                 <div class="details col-md-6">
-					<h4>Количество изделий на складе: {{ product.Amount }}.</h4>
-                    <p class="product-description">{{ product.Comment }}</p>
+					<h4>Количество изделий на складе: {{ product.amount }}.</h4>
+                    <p class="product-description">{{ product.description }}</p>
+                    <div class="form-group">
+                        <label for="materialSelector" class="col-sm-3 control-label">Материал</label>
+                        <div class="col-sm-9">
+                            <select class="form-control"
+                                    id="materialSelector"
+                                    data-url="{% url 'ajax_info_about_product' category_id product.id %}">
+							{% for m in materials %}
+                                <option>{{ m.name }}</option>
+							{% endfor %}
+                            </select>
+                        </div>
+                    </div>
                     <div class="form-group">
                         <label for="sizeSelector" class="col-sm-3 control-label">Размер</label>
                         <div class="col-sm-9">
@@ -152,16 +168,6 @@
 							{% for s in size %}
                                 <option>{{ s.dims }}</option>
 							{% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="materialSelector" class="col-sm-3 control-label">Материал</label>
-                        <div class="col-sm-9">
-                            <select class="form-control" id="materialSelector">
-							{% for m in material %}
-                                <option>{{ m.Name }}</option>
-							{% endfor %}	
                             </select>
                         </div>
                     </div>
@@ -179,16 +185,25 @@
                     <h4 class="price">Цена: <span>{{ product.Price }}<i class="fa fa-ruble fa-fw"></i></span></h4>
                     <!-- <p class="vote"><strong>95%</strong> покупателей одобряют <strong>(87 голосов)</strong></p> -->
                     <div class="action">
-						<form method="GET" action="/category/{{category_id}}/product/{{product.id}}">
-							<button type="button" class="btn btn-warning" data-toggle="modal" data-target="#EditModal">Редактировать</button>
-						</form>
-						<form method="POST" action="/category/{{category_id}}/product/{{product.id}}">
-							<input type="hidden" name="_method" value="DELETE">
-							<button type="submit" class="btn btn-danger">Удалить</button>
-						</form>
-                        <button class="add-to-cart my-cart-btn btn btn-default" type="button">
-						Добавить в корзину
-						</button>
+                        {% if user.is_superuser %}
+                            <form method="GET" action="{% url 'concrete_product_create' category_id product.id %}">
+                                <button type="submit" class="btn btn-primary">Добавить конкретный продукт</button>
+                            </form>
+                            <br>
+                            <form method="GET" action="/category/{{category_id}}/product/{{product.id}}">
+                                <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#EditModal">Редактировать</button>
+                            </form>
+                            <br>
+                            <form method="POST" action="/category/{{category_id}}/product/{{product.id}}">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <button type="submit" class="btn btn-danger">Удалить</button>
+                            </form>
+                        {% endif %}
+                        {% if not user.is_superuser %}
+                            <button class="add-to-cart my-cart-btn btn btn-default" type="button">
+                            Добавить в корзину
+                            </button>
+                        {% endif %}
                         <!-- <button class="like btn btn-default" type="button"><span class="fa fa-heart"></span></button> -->
                     </div>
 					

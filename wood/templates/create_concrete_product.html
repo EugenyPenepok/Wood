@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block rows %}
+
+{% load static %}
+
+<div class="container form">
+	<div class="col-xs-12 col-sm-12">
+		<h4>Добавление конкретного изделия</h4>
+		<form method="POST" action="{% url 'concrete_product_create' category_id product_id %}">
+			{% csrf_token %}
+			
+			<div class="row">
+				<div class="form-group col-sm-6">
+					<label for="inputAmount">Количество</label>
+					<input name="amount" id="inputAmount" class="form-control" type="number" min="0" value="0">
+				</div>
+			</div>
+			<div class="row">
+				<div class="form-group col-sm-6">
+					<label for="time">Срок изготовления в днях</label>
+					<input name="time" id="time" class="form-control" type="number" min="0" value="0">
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="form-group col-sm-6">
+					<label for="materials">Материал</label>
+					<select name="materials" class="form-control col-sm-6" id="materials">
+						{% for m in materials %}
+							<option value="{{ m.id }}">{{ m.name }}</option>
+						{% endfor %}
+					</select>
+				</div>
+			</div>
+			<div class="row">
+				<div class="form-group col-sm-6">
+					<label for="sizes">Размер</label>
+					<select name="sizes" class="form-control col-sm-6" id="sizes">
+						{% for s in sizes %}
+							<option value="{{ s.id }}">{{ s.length }} x {{ s.width }} x {{ s.height }}</option>
+						{% endfor %}
+					</select>
+				</div>
+			</div>
+			<div class="row">
+				<div class="form-group col-sm-6">
+					<label for="covers">Покрытие</label>
+					<select name="coatings" class="form-control col-sm-6" id="coatings">
+						{% for c in coatings %}
+							<option value="{{ c.id }}">{{ c.name }}</option>
+						{% endfor %}
+					</select>
+				</div>
+			</div>
+			
+			<div class="row">
+				<div class="form-group col-sm-6">
+					<label for="inputPrice">Цена</label>
+					<input name="price" id="inputPrice" class="form-control" type="number" min="0" value="0">
+				</div>
+			</div>
+
+			<button type="submit" class="btn btn-primary">Создать</button>
+		</form>
+	</div>
+</div>
+{% endblock %}
