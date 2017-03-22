@@ -1,100 +1,38 @@
-<!-- Редактирование изделия -->
-<div class="modal fade" data-modal-color="lightgreen" id="EditModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog" role="document">
-	<div class="modal-content">
-	  <div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-		<h4 class="modal-title">Редактирование изделия</h4>
-	  </div>
-	<form id="edit" method="POST" action="/category/{{category_id}}/product/{{product.id}}">
-	<input type="hidden" name="_method" value="PUT">
-	  <div class="modal-body">
-		<div class="row row-offcanvas row-offcanvas-right">
-			<div class="col-xs-12 col-sm-12">
-				<div class="row">
-					<div class="form-group col-sm-6">
-						<label for="inputName">Название</label>
-						{%  if product is defined %}	
-							<input name="name" id="inputName" class="form-control" type="text" value="{{product.Name}}">
-						{% else %}
-							<input name="name" id="inputName" class="form-control" type="text">
-						{% endif %}
-					</div>
-					<div class="form-group col-sm-6">
-						<label for="inputPrice">Цена</label>
-						{%  if product is defined %}
-							<input name="price" id="inputPrice" class="form-control" type="number" min="0" value="{{product.Price}}">
-						{% else %}
-							<input name="price" id="inputPrice" class="form-control" type="number" min="0" value="0">
-						{% endif %}
-					</div>
-					<div class="form-group col-sm-6">
-						<label for="inputAmount">Количество</label>
-						{%  if product is defined %}
-							<input name="amount" id="inputAmount" class="form-control" type="number" min="0" value="{{product.Amount}}">
-						{% else %}
-							<input name="amount" id="inputAmount" class="form-control" type="number" min="0" value="0">
-						{% endif %}
-					</div>
-				</div>
-				
-				<div class="row">
-					<div class="form-group col-sm-6">
-						<label for="description">Описание</label>
-						<textarea name="comment" class="form-control" id="description" rows="8">
-						{%  if product is defined %}
-							{{product.Comment}}
-						{% endif %}
-						</textarea>
-					</div>
-				</div>
-				
-				<div class="row">										
-					<div class="form-group col-sm-6">
-						<label for="MaterialsMultiSelect">Материалы</label>
-						{% for m in materials %}
-							<br>
-								{% if m.selected == 1 %}
-								<input name="materials[]" value="{{m.id}}" type="checkbox" checked="">{{m.Name}}</input>
-								{% else %}
-								<input name="materials[]" value="{{m.id}}" type="checkbox">{{m.Name}}</input>
-								{% endif %}
-						{% endfor %}
-					</div>
-					
-					<div class="form-group col-sm-6">
-						<label for="sizesMultiSelect">Размеры</label>
-						{% for s in sizes %}
-							<br>
-							{% if s.selected == 1 %}
-							<input name="sizes[]" value="{{s.id}}" type="checkbox" checked="">{{s.dims}}</input>
-							{% else %}
-							<input name="sizes[]" value="{{s.id}}" type="checkbox">{{s.dims}}</input>
-							{% endif %}									
-						{% endfor %}
-					</div>
-					
-					<div class="form-group col-sm-6">
-						<label for="coversMultiSelect">Покрытия</label>
-						{% for c in covers %}
-							<br>
-							{% if c.selected == 1 %}
-							<input name="covers[]" value="{{c.id}}" type="checkbox" checked="">{{c.Name}}</input>
-							{% else %}
-							<input name="covers[]" value="{{c.id}}" type="checkbox">{{c.Name}}</input>
-							{% endif %}
-						{% endfor %}
-					</div>
-				</div>
-				
-			</div>
-		</div>
-	  </div>
-	  <div class="modal-footer">
-		<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
-		<button type="submit" class="btn btn-primary">Создать</button>
-	  </div>
-	</form>
-	</div>
-  </div>
+{% extends "base.html" %}
+
+{% block rows %}
+{% load static %}
+
+<div class="container form">
+    <div class="col-xs-12 col-sm-12">
+        <h4>Редактирование продукта</h4>
+        <form method="POST" enctype="multipart/form-data" action="{% url 'edit_product' category_id product.id %}" >
+            {% csrf_token %}
+            <div class="row">
+                <div class="form-group col-sm-6">
+                    <label for="inputName">Название</label>
+                    <input name="name" id="inputName" class="form-control" type="text" value="{{ product.name }}">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group col-sm-6">
+                    <label for="description">Описание</label>
+                    <textarea name="comment"
+                              class="form-control"
+                              id="description"
+                              rows="8">{{ product.description }}</textarea>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-sm-6">
+                    <label for="image">Картинка</label>
+                    <input type="file" name="image" id="image"/>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+        </form>
+    </div>
 </div>
+
+{% endblock %}
