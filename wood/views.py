@@ -180,7 +180,7 @@ def create_size(request):
                     height=request.POST['height'],
                     weight=request.POST['weight'])
         size.save()
-        return redirect('get_categories')
+        return redirect('get_sizes')
 
 
 def view_profile(request):
@@ -281,3 +281,29 @@ def edit_coating(request, coating_id):
     else:
         context = {"coating": coating}
         return render(request, 'edit_coating.html', context)
+
+
+def get_sizes(request):
+    sizes = Size.objects.all()
+    context = {'sizes': sizes}
+    return render(request, 'view_sizes.html', context)
+
+
+def delete_size(request, size_id):
+    size = Size.objects.get(pk=size_id)
+    size.delete()
+    return redirect('get_sizes')
+
+
+def edit_size(request, size_id):
+    size = Size.objects.get(pk=size_id)
+    if request.method == 'POST':
+        size.length = request.POST['length']
+        size.width = request.POST['width']
+        size.height = request.POST['height']
+        size.weight = request.POST['weight']
+        size.save()
+        return redirect('get_sizes')
+    else:
+        context = {"size": size}
+        return render(request, 'edit_size.html', context)
