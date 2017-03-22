@@ -75,10 +75,17 @@ def create_product(request, category_id):
                           description=request.POST['comment'],
                           product_image=image_file)
         product.save()
-        return redirect('get_categories')
+        return redirect('category_content', category_id)
 
 
-def get_product(request, category_id, product_id):
+def delete_product(request, category_id, product_id):
+    product = Product.objects.get(pk=product_id)
+    product.product_image.delete(save=True)
+    product.delete()
+    return redirect('category_content', category_id)
+
+
+def view_product(request, category_id, product_id):
     product = Product.objects.get(pk=product_id)
     concrete_products = ConcreteProduct.objects.filter(product_id=product_id)
     materials = Material.objects.filter(concreteproduct__product=product).distinct()
@@ -119,7 +126,7 @@ def create_concrete_product(request, category_id, product_id):
                                            coating=coating,
                                            size=size)
         concrete_product.save()
-        return redirect('get_categories')
+        return redirect('view_concrete_products', category_id, product_id)
 
 
 def create_personal_order(request):
@@ -321,11 +328,11 @@ def ajax_update_product(request, product_id):
         sizes = Size.objects.\
             filter(concreteproduct__material=material).\
             filter(concreteproduct__product=product).\
-            distinct()
+            filter(concreteproduct__coating=coating).distinct()
         coatings = Coating.objects.\
+            filter(concreteproduct__size=size).\
             filter(concreteproduct__material=material).\
             filter(concreteproduct__product=product).\
-            filter(concreteproduct__size=size).\
             distinct()
         data['form_is_valid'] = True
         data['html_info'] = render_to_string('product_info.html',
@@ -343,3 +350,18 @@ def ajax_update_product(request, product_id):
     else:
         data['none'] = True
     return JsonResponse(data)
+
+
+def view_concrete_products(request, category_id, product_id):
+    # product = Product.objects.get(pk=product_id)
+    concrete_products = ConcreteProduct.objects.filter(product_id=product_id)
+    context = {'concrete_products': concrete_products,
+               'category_id': category_id,
+               'product': Product.objects.get(pk=product_id)}
+    return render(request, 'view_concrete_products.html', context)
+
+
+def delete_concrete_product(request, category_id, product_id, concrete_product_id):
+    concrete_product = ConcreteProduct.objects.get(pk=concrete_product_id)
+    concrete_product.delete()
+    return redirect('view_concrete_products', category_id, product_id)

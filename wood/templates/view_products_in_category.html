@@ -16,7 +16,7 @@
     </div>
 	<div class = "row">
         {% if user.is_superuser %}
-            <form action="{% url 'product_create' category.id %}">
+            <form action="{% url 'create_product' category.id %}">
                 <button type="submit" class="btn btn-default">
                     Добавить
                 </button>
@@ -34,10 +34,8 @@
                 <img src="{{ prod.product_image.url }}" class="img-responsive center-block">
                 <div class="producttitle">{{prod.name}}</div>
                 <div class="productprice">
-                    <div class="pull-right">
-                        <a href="{% url 'product' category.id prod.id %}" class="btn btn-primary btn-sm" role="button">Просмотр</a>
-                    </div>
-                    <div class="pricetext">{{prod.Price}}<i class="fa fa-ruble fa-fw"></i></div>
+                        <a href="{% url 'view_product' category.id prod.id %}" class="btn btn-primary btn-sm" role="button">Просмотреть</a>
+                        <a href="{% url 'delete_product' category.id prod.id %}" class="btn btn-danger btn-sm" role="button">Удалить</a>
                 </div>
             </div>
 		{% endfor %}

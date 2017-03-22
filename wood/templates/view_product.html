@@ -52,18 +52,10 @@
 
                         <div class="action">
                             {% if user.is_superuser %}
-                                <form method="GET" action="{% url 'concrete_product_create' category_id product.id %}">
-                                    <button type="submit" class="btn btn-primary">Добавить конкретный продукт</button>
+                                <form method="GET" action="{% url 'view_concrete_products' category_id product.id %}">
+                                    <button type="submit" class="btn btn-warning">Все изделия</button>
                                 </form>
                                 <br>
-                                <form method="GET" action="/category/{{category_id}}/product/{{product.id}}">
-                                    <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#EditModal">Редактировать</button>
-                                </form>
-                                <br>
-                                <form method="POST" action="/category/{{category_id}}/product/{{product.id}}">
-                                    <input type="hidden" name="_method" value="DELETE">
-                                    <button type="submit" class="btn btn-danger">Удалить</button>
-                                </form>
                             {% endif %}
                             {% if not user.is_superuser %}
                                 <button class="add-to-cart my-cart-btn btn btn-default" type="button">
