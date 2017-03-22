@@ -1,6 +1,6 @@
 $(document).ready(function () {
 
-    $(".btn-default").click(function () {
+    $(".order-btn").click(function () {
         var id = $(this).attr('id');
         $.ajaxSetup({
             beforeSend: function (xhr, settings) {
@@ -16,7 +16,7 @@ $(document).ready(function () {
             .done(function (data) { // Разбираем полученные данные и пишем в блок grades
                 if (data != 'OK') {
                     $('#modal_requirements').modal('show');
-                    $(".modal-body").html(data);
+                    $("#modal_requirements .modal-body").html(data);
                     return true;
                 }
             })
