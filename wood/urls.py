@@ -27,10 +27,25 @@ urlpatterns = [
         views.create_concrete_product, name='concrete_product_create'),
 
     url(r'^material/create$', views.create_material, name='material_create'),
+    url(r'^material/(?P<material_id>[0-9]+)/edit', views.edit_material, name='material_edit'),
+    url(r'^material/(?P<material_id>[0-9]+)/delete', views.delete_material, name='material_delete'),
+    url(r'^materials/$', views.view_materials, name='get_materials'),
+
     url(r'^coating/create$', views.create_coating, name='coating_create'),
+    url(r'^coating/(?P<coating_id>[0-9]+)/edit', views.edit_coating, name='coating_edit'),
+    url(r'^coating/(?P<coating_id>[0-9]+)/delete', views.delete_coatings, name='coating_delete'),
+    url(r'^coatings/$', views.view_coatings, name='get_coatings'),
+
     url(r'^size/create$', views.create_size, name='size_create'),
+    url(r'^size/(?P<size_id>[0-9]+)/edit', views.edit_size, name='size_edit'),
+    url(r'^size/(?P<size_id>[0-9]+)/delete', views.delete_size, name='size_delete'),
+    url(r'^sizes$', views.get_sizes, name='get_sizes'),
 
     url(r'^profile/view$', views.view_profile, name='view_profile'),
 
     url(r'^orders/view$', views.view_orders, name='view_orders'),
+
+    url(r'^profile/change_password', views.change_password, name='change_password'),
+    url(r'^order/(?P<order_id>[0-9]+)/attachments', views.download_attachments, name='download_attachments'),
+
 ]

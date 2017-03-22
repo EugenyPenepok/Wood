@@ -1,11 +1,15 @@
-from django.shortcuts import render, redirect
-from django.core.files.storage import default_storage
-from django.core.files.base import ContentFile
-from django.contrib.auth import authenticate, login, logout
-from django.http import JsonResponse
+import os
 
-# Create your views here.
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.db import IntegrityError
+from django.db.models import ProtectedError
+from django.http import HttpResponse
+from django.http import JsonResponse
+from django.shortcuts import render, redirect
+
 from wood.models import *
+from wood_site.settings import STATIC_URL
 
 
 def index(request):
@@ -55,6 +59,8 @@ def edit_category(request, category_id):
 
 def delete_category(request, category_id):
     category = Category.objects.get(pk=category_id)
+    if Product.objects.filter(category=category).exists():
+        return error(request, 'Невозможно удалить категорию в которой есть продукты')
     category.image.delete(save=True)
     category.delete()
     return redirect('get_categories')
@@ -68,9 +74,9 @@ def create_product(request, category_id):
         image_file = request.FILES['image']
         category = Category.objects.get(pk=category_id)
         product = Product(category=category,
-                            name=request.POST['name'],
-                            description=request.POST['comment'],
-                            product_image=image_file)
+                          name=request.POST['name'],
+                          description=request.POST['comment'],
+                          product_image=image_file)
         product.save()
         return redirect('get_categories')
 
@@ -158,7 +164,7 @@ def create_material(request):
                             description=request.POST['description'],
                             amount=request.POST['amount'])
         material.save()
-        return redirect('get_categories')
+        return redirect('get_materials')
 
 
 def create_coating(request):
@@ -166,9 +172,9 @@ def create_coating(request):
         return render(request, 'create_coating.html')
     elif request.method == 'POST':
         coating = Coating(name=request.POST['name'],
-                            description=request.POST['description'])
+                          description=request.POST['description'])
         coating.save()
-        return redirect('get_categories')
+        return redirect('get_coatings')
 
 
 def create_size(request):
@@ -180,39 +186,71 @@ def create_size(request):
                     height=request.POST['height'],
                     weight=request.POST['weight'])
         size.save()
-        return redirect('get_categories')
+        return redirect('get_sizes')
 
 
 def view_profile(request):
-    return render(request, 'view_profile.html')
+    user = request.user
+    client = Client.objects.get(user=user)
+    if request.method == 'GET':
+        context = {'username': user.username,
+                   'last_name': user.last_name,
+                   'first_name': user.first_name,
+                   'email': user.email,
+                   'skype': client.skype,
+                   'telephone': client.telephone,
+                   'postcode': client.postcode,
+                   'address': client.address}
+        return render(request, 'view_profile.html', context)
+    else:
+        user.first_name = request.POST['first_name']
+        user.last_name = request.POST['last_name']
+        user.email = request.POST['email']
+        user.save()
+        client.skype = request.POST['skype']
+        client.telephone = request.POST['telephone']
+        client.postcode = request.POST['postcode']
+        client.address = request.POST['address']
+        client.save()
+        return redirect('view_profile')
 
 
 def view_orders(request):
-    return render(request, 'view_orders.html')
+    client = Client.objects.get(user=request.user)
+    orders = PersonalOrder.objects.filter(client=client)
+    context = {'orders': orders}
+    return render(request, 'view_orders.html', context)
 
 
 def registration(request):
     if request.method == 'GET':
         return render(request, 'create_user.html')
     else:
-        user = User.objects.create_user(username=request.POST['username'],
-                                        email=request.POST['email'],
-                                        password=request.POST['password'],
-                                        first_name=request.POST['first_name'],
-                                        last_name=request.POST['last_name'],
-                                        )
-        user.save()
+        try:
+            user = User.objects.create_user(username=request.POST['username'],
+                                            email=request.POST['email'],
+                                            password=request.POST['password'],
+                                            first_name=request.POST['first_name'],
+                                            last_name=request.POST['last_name'],
+                                            )
+            user.save()
+        except IntegrityError:
+            return error(request, 'Пользователь с таким никнеймом уже существует')
         client = Client(user=user,
                         telephone=request.POST['telephone'],
                         skype=request.POST['skype'],
                         postcode=request.POST['postcode'],
                         address=request.POST['address'])
+
         client.save()
         return redirect('index')
 
 
 def login_user(request):
-    user = authenticate(username=request.POST['username'], password=request.POST['password'])
+    try:
+        user = authenticate(username=request.POST['username'], password=request.POST['password'])
+    except AttributeError:
+        return error(request, 'Неверный пароль')
     if user.is_active:
         login(request, user)
     return redirect('index')
@@ -232,3 +270,127 @@ def ajax_update_product(request, category_id, product_id):
     data = dict()
     data['form_is_valid'] = True
     return JsonResponse(data)
+
+
+def view_materials(request):
+    materials = Material.objects.all()
+    context = {'materials': materials}
+    return render(request, 'view_materials.html', context)
+
+
+def delete_material(request, material_id):
+    material = Material.objects.get(pk=material_id)
+    try:
+        material.delete()
+    except ProtectedError:
+        return error(request, 'Удаляемый материал используется для изделий')
+    return redirect('get_materials')
+
+
+def edit_material(request, material_id):
+    material = Material.objects.get(pk=material_id)
+    if request.method == 'POST':
+        material.name = request.POST['name']
+        material.description = request.POST['description']
+        material.amount = request.POST['amount']
+        material.save()
+        return redirect('get_materials')
+    else:
+        context = {"material": material}
+        return render(request, 'edit_material.html', context)
+
+
+def view_coatings(request):
+    coatings = Coating.objects.all()
+    context = {'coatings': coatings}
+    return render(request, 'view_coatings.html', context)
+
+
+def delete_coatings(request, coating_id):
+    coating = Coating.objects.get(pk=coating_id)
+    try:
+        coating.delete()
+    except ProtectedError:
+        return error(request, 'Удаляемое покрытие используется для изделий')
+    return redirect('get_coatings')
+
+
+def edit_coating(request, coating_id):
+    coating = Coating.objects.get(pk=coating_id)
+    if request.method == 'POST':
+        coating.name = request.POST['name']
+        coating.description = request.POST['description']
+        coating.save()
+        return redirect('get_coatings')
+    else:
+        context = {"coating": coating}
+        return render(request, 'edit_coating.html', context)
+
+
+def get_sizes(request):
+    sizes = Size.objects.all()
+    context = {'sizes': sizes}
+    return render(request, 'view_sizes.html', context)
+
+
+def delete_size(request, size_id):
+    size = Size.objects.get(pk=size_id)
+    try:
+        size.delete()
+    except ProtectedError:
+        return error(request, 'Удаляемый размер используется для изделий')
+    return redirect('get_sizes')
+
+
+def edit_size(request, size_id):
+    size = Size.objects.get(pk=size_id)
+    if request.method == 'POST':
+        size.length = request.POST['length']
+        size.width = request.POST['width']
+        size.height = request.POST['height']
+        size.weight = request.POST['weight']
+        size.save()
+        return redirect('get_sizes')
+    else:
+        context = {"size": size}
+        return render(request, 'edit_size.html', context)
+
+
+@login_required
+def change_password(request):
+    if request.is_ajax():
+        try:
+            # extract new_password value from POST/JSON here, then
+
+            user = User.objects.get(username=request.user.username)
+
+        except User.DoesNotExist:
+            return HttpResponse("USER_NOT_FOUND")
+        else:
+            if not user.check_password(request.POST['old_password']):
+                return HttpResponse("Неверный пароль")
+            if request.POST['new_password'] != request.POST['confirm_password']:
+                return HttpResponse("Пароли не совпадают")
+            user.set_password(request.POST['new_password'])
+            user.save()
+
+            user = authenticate(username=request.user.username, password=request.POST['new_password'])
+            if user.is_active:
+                login(request, user)
+            return HttpResponse("OK")
+    else:
+        return HttpResponse(status=400)
+
+
+def error(request, error_message):
+    return render(request, 'error_page.html', context={'error_message': error_message})
+
+
+def download_attachments(request, order_id):
+    order = PersonalOrder.objects.get(pk=order_id)
+
+    file_path = order.attachments.url[1:]
+    with open(file_path, 'rb') as fh:
+        response = HttpResponse(fh.read(), content_type="application/")
+        response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
+        return response

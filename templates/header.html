@@ -27,9 +27,9 @@
                                 <li><a href="{% url 'view_profile' %}">Профиль</a></li>
                                 <li><a href="{% url 'view_orders' %}">Мои заказы</a></li>
                             {% else %}
-                                <li><a href="{% url 'material_create' %}">Материалы</a></li>
-                                <li><a href="{% url 'coating_create' %}">Покрытия</a></li>
-                                <li><a href="{% url 'size_create' %}">Размеры</a></li>
+                                <li><a href="{% url 'get_materials' %}">Материалы</a></li>
+                                <li><a href="{% url 'get_coatings' %}">Покрытия</a></li>
+                                <li><a href="{% url 'get_sizes' %}">Размеры</a></li>
                             {% endif %}
 
                             <li>

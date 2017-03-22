@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block rows %}
+    {% load static %}
+    <div class="catalog-header">
+        <div class="col-lg-12">
+            <h1>Покрытия</h1>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <img src="{% static  "img/orn_gal.png" %}" class="img-responsive center-block"/>
+        </div>
+    </div>
+    {% csrf_token %}
+    <div class="container">
+        <div class="col-md-8 col-md-offset-2">
+            <div class="row">
+                <form method="GET" action="{% url 'size_create' %}">
+                    <button type="submit" class="btn btn-primary">Добавить размер</button>
+                </form>
+            </div>
+            <div class="row">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th class="col-md-3">Длина</th>
+                            <th class="col-md-3">Ширина</th>
+                            <th class="col-md-3">Высота</th>
+                            <th class="col-md-3">Вес</th>
+                            <th class="col-md-2"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for item in sizes %}
+                            <tr>
+                                <td>{{ item.length }}</td>
+                                <td>{{ item.width }}</td>
+                                <td>{{ item.height }}</td>
+                                <td>{{ item.weight }}</td>
+                                <td class="table-button">
+                                    <form method="GET" action="{% url 'size_edit' item.id %}">
+                                        <button type="submit" class="btn btn-success">Редактировать</button>
+                                    </form>
+                                    <form method="GET" action="{% url 'size_delete' item.id %}">
+                                        <button type="submit" class="btn btn-danger">Удалить</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

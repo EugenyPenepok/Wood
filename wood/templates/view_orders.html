@@ -1,86 +1,89 @@
 {% extends "base.html" %}
 {% block rows %}
-{% load static %}
+    {% load static %}
 
-<div class="catalog-header">
-    <div class="col-lg-12">
-        <h1>Просмотр заказов</h1>
+    <div class="catalog-header">
+        <div class="col-lg-12">
+            <h1>Просмотр заказов</h1>
+        </div>
     </div>
-</div>
 
-<div class="well">
-    <ul class="nav nav-tabs">
-      <li class="active"><a href="#gallery_orders" data-toggle="tab">Из галереи</a></li>
-      <li><a href="#individ_orders" data-toggle="tab">Индивидуальные</a></li>
-    </ul>
-    <div id="myTabContent" class="tab-content">
-		<!-- из галереи -->
-		<div class="tab-pane col-md-8 active in" id="gallery_orders">
-			<table class="table">
-				<thead> 
-					<tr> 
-						<th>#</th>
-						<th>Название</th>
-						<th>Категория</th>
-						<th>Дата</th>
-						<th>Размер</th> 
-						<th>Материал</th>
-						<th>Покрытие</th>
-						<th>Статус</th>
-					</tr> 
-				</thead>
-				
-				<tbody>
-					<!-- тут цикл -->
-					<!-- TODO: цвет строки меняется в зависимости от статуса -->
-					<tr class="success">
-						<th scope="row">1</th>
-						<td>имечко</td>
-						<td>оооо</td>
-						<td>моя оборона</td>
-						<td>вот</td>
-						<td>и осталось</td>
-						<td>лишь</td>
-						<td>снять усталость</td>
-						
-					</tr>
-					<!-- тут эндфор -->
-				</tbody>
-			</table>
-		</div>
-	  
-		<!-- индивидуальные -->
-		<div class="tab-pane col-md-8 fade" id="individ_orders">
-			<table class="table">
-				<thead> 
-					<tr> 
-						<th>#</th>
-						<th>[НАЗВАНИЕ (ДОБАВИТЬ В БАЗУ?)]</th>
-						<th>Описание</th>
-						<th>Дата</th>
-						<th>Тип доставки</th> 
-						<th>Статус</th>
-					</tr> 
-				</thead>
-				
-				<tbody>
-					<!-- тут цикл -->
-					<!-- TODO: цвет строки меняется в зависимости от статуса -->
-					<tr class="warning">
-						<th scope="row">1</th>
-						<td>2</td>
-						<td>
-                            <button type="submit" class="btn">Посмотреть</button>
-                        </td>
-						<td>4</td>
-						<td>ЗАГЛУШКА</td>
-						<td>6</td>						
-					</tr>
-					<!-- тут эндфор -->
-				</tbody>
-			</table>
-		</div>
-  </div>
-</div>
+    <div class="well">
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#gallery_orders" data-toggle="tab">Из галереи</a></li>
+            <li><a href="#individ_orders" data-toggle="tab">Индивидуальные</a></li>
+        </ul>
+        <div id="myTabContent" class="tab-content">
+            <!-- из галереи -->
+            <div class="tab-pane col-md-10 active in" id="gallery_orders">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Название</th>
+                        <th>Категория</th>
+                        <th>Дата</th>
+                        <th>Размер</th>
+                        <th>Материал</th>
+                        <th>Покрытие</th>
+                        <th>Статус</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <!-- тут цикл -->
+                    <!-- TODO: цвет строки меняется в зависимости от статуса -->
+                    <tr class="success">
+                        <th scope="row">1</th>
+                        <td>имечко</td>
+                        <td>оооо</td>
+                        <td>моя оборона</td>
+                        <td>вот</td>
+                        <td>и осталось</td>
+                        <td>лишь</td>
+                        <td>снять усталость</td>
+
+                    </tr>
+                    <!-- тут эндфор -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- индивидуальные -->
+            <div class="tab-pane col-md-10 fade" id="individ_orders">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Описание</th>
+                        <th>Вложения</th>
+                        <th>Срок изготовления</th>
+                        <th>Тип доставки</th>
+                        <th>Статус</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for order in orders %}
+                        <tr>
+                            <th scope="row">1</th>
+                            {#						<td>#}
+                            {#                            <button type="submit" class="btn">Посмотреть</button>#}
+                            {#                        </td>#}
+                            <td>
+                                {{ order.requirements }}
+                            </td>
+                            <td><a href="{% url 'download_attachments' order.id %}">Скачать вложения </a></td>
+                            <td>Не на этой итерации</td>
+                            <td>Не на этой итерации</td>
+                            <td>Не на этой итерации</td>
+                        </tr>
+                    {% endfor %}
+                    <!-- тут эндфор -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
 {% endblock %}
