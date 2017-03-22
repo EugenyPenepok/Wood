@@ -217,8 +217,8 @@ def view_profile(request):
 
 def view_orders(request):
     client = Client.objects.get(user=request.user)
-    orders = PersonalOrder.objects.filter(client=client)
-    context = {'orders': orders}
+    personal_orders = PersonalOrder.objects.filter(client=client)
+    context = {'personal_orders': personal_orders}
     return render(request, 'view_orders.html', context)
 
 
@@ -360,8 +360,6 @@ def edit_size(request, size_id):
 def change_password(request):
     if request.is_ajax():
         try:
-            # extract new_password value from POST/JSON here, then
-
             user = User.objects.get(username=request.user.username)
 
         except User.DoesNotExist:
@@ -394,3 +392,18 @@ def download_attachments(request, order_id):
         response = HttpResponse(fh.read(), content_type="application/")
         response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
         return response
+
+
+@login_required
+def get_requirements(request, order_id):
+    if request.is_ajax():
+        try:
+            user = User.objects.get(username=request.user.username)
+
+        except User.DoesNotExist:
+            return HttpResponse("USER_NOT_FOUND")
+        else:
+            order = PersonalOrder.objects.get(pk=order_id)
+            return HttpResponse(order.requirements)
+    else:
+        return HttpResponse(status=400)
