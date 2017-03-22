@@ -3,10 +3,8 @@
 
     {% load static %}
 
-    <link href="/css/product.css" rel="stylesheet">
-	
-	<!-- Custom Fonts -->
-	<link href="/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <!-- Custom Fonts -->
+	<link href="{% static 'font-awesome/css/font-awesome.min.css'%}" rel="stylesheet" type="text/css">
 	<link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
 
     {% include 'edit_product.html' %}
@@ -19,7 +17,7 @@
 
 	<div class = "container">
 		<div class = "row">
-			<img src = "{% static '/img/orn_product.png' %}" class="img-responsive center-block" />
+			<img src = "{% static 'img/orn_product.png' %}" class="img-responsive center-block" />
 		</div>
 	</div>
 	
@@ -115,5 +113,6 @@
             </div>
         </div>
     </div>
-    <script type="text/javascript" src="{% static 'js/ajax_update_product.js' %}"></script>
+
+    <script type="text/javascript" src="{% static "js/ajax_update_product.js" %}"></script>
 {% endblock %}
