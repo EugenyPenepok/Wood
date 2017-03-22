@@ -318,10 +318,14 @@ def ajax_update_product(request, product_id):
 
     if concrete_products:
         materials = Material.objects.filter(concreteproduct__product=product).distinct()
-        sizes = Size.objects.filter(concreteproduct__material=material).filter(concreteproduct__product=product).distinct()
+        sizes = Size.objects.\
+            filter(concreteproduct__material=material).\
+            filter(concreteproduct__product=product).\
+            distinct()
         coatings = Coating.objects.\
             filter(concreteproduct__material=material).\
             filter(concreteproduct__product=product).\
+            filter(concreteproduct__size=size).\
             distinct()
         data['form_is_valid'] = True
         data['html_info'] = render_to_string('product_info.html',
