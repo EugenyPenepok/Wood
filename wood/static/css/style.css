@@ -514,3 +514,9 @@ p.copyright {
     width: 150px;
     height: 150px;
 }
+.table-button{
+    text-align: center;
+}
+.table-button *{
+    margin-bottom: 5px;
+}

@@ -27,6 +27,10 @@ urlpatterns = [
         views.create_concrete_product, name='concrete_product_create'),
 
     url(r'^material/create$', views.create_material, name='material_create'),
+    url(r'^material/(?P<material_id>[0-9]+)/edit', views.edit_material, name='material_edit'),
+    url(r'^material/(?P<material_id>[0-9]+)/delete', views.delete_material, name='material_delete'),
+    url(r'^materials/$', views.view_materials, name='get_materials'),
+
     url(r'^coating/create$', views.create_coating, name='coating_create'),
     url(r'^size/create$', views.create_size, name='size_create'),
 
