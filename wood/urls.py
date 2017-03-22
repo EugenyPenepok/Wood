@@ -48,6 +48,11 @@ urlpatterns = [
 
     url(r'^orders/view$', views.view_orders, name='view_orders'),
 
+
     url(r'^category/[0-9]+/product/(?P<product_id>[0-9]+)/ajax_update_product',
         views.ajax_update_product, name='ajax_update_product'),
+
+    url(r'^profile/change_password', views.change_password, name='change_password'),
+    url(r'^order/(?P<order_id>[0-9]+)/attachments', views.download_attachments, name='download_attachments'),
+    url(r'^order/(?P<order_id>[0-9]+)/requirements', views.get_requirements, name='get_requirements'),
 ]
