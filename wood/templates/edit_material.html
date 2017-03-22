@@ -10,14 +10,14 @@
     </div>
 	
     <div class="main-login main-center">
-        <form class="form-horizontal" method="post" action="{% url 'material_create' %}">
+        <form class="form-horizontal" method="post" action="{% url 'material_edit' material.id %}">
             {% csrf_token %}
             <div class="form-group">
                 <label for="name" class="cols-sm-2 control-label">Название</label>
                 <div class="cols-sm-10">
                     <div class="input-group">
                         <span class="input-group-addon"><i class="fa fa-tree fa" aria-hidden="true"></i></span>
-                        <input type="text" class="form-control" name="name" id="name" required="true" placeholder="Введите название материала"/>
+                        <input type="text" class="form-control" name="name" id="name" required="true" placeholder="Введите название материала" value="{{ material.name }}"/>
                     </div>
                 </div>
             </div>
@@ -27,7 +27,7 @@
                 <div class="cols-sm-10">
                     <div class="input-group">
                         <span class="input-group-addon"><i class="fa fa-info fa-lg" aria-hidden="true"></i></span>
-                        <input type="text" class="form-control" name="description" id="description"  placeholder="Введите описание"/>
+                        <input type="text" class="form-control" name="description" id="description"  placeholder="Введите описание" value="{{ material.description }}"/>
                     </div>
                 </div>
             </div>
@@ -37,7 +37,7 @@
                 <div class="cols-sm-10">
                     <div class="input-group">
                         <span class="input-group-addon"><i class="fa fa-arrows-v fa-lg" aria-hidden="true"></i></span>
-                        <input type="number" class="form-control" name="amount" id="amount" min="0" required="true" value="0"/>
+                        <input type="number" class="form-control" name="amount" min="0" id="amount" required="true" value="{{ material.amount }}"/>
                     </div>
                 </div>
             </div>

@@ -68,9 +68,9 @@ def create_product(request, category_id):
         image_file = request.FILES['image']
         category = Category.objects.get(pk=category_id)
         product = Product(category=category,
-                            name=request.POST['name'],
-                            description=request.POST['comment'],
-                            product_image=image_file)
+                          name=request.POST['name'],
+                          description=request.POST['comment'],
+                          product_image=image_file)
         product.save()
         return redirect('get_categories')
 
@@ -158,7 +158,7 @@ def create_material(request):
                             description=request.POST['description'],
                             amount=request.POST['amount'])
         material.save()
-        return redirect('get_categories')
+        return redirect('get_materials')
 
 
 def create_coating(request):
@@ -166,9 +166,9 @@ def create_coating(request):
         return render(request, 'create_coating.html')
     elif request.method == 'POST':
         coating = Coating(name=request.POST['name'],
-                            description=request.POST['description'])
+                          description=request.POST['description'])
         coating.save()
-        return redirect('get_categories')
+        return redirect('get_coatings')
 
 
 def create_size(request):
@@ -180,7 +180,7 @@ def create_size(request):
                     height=request.POST['height'],
                     weight=request.POST['weight'])
         size.save()
-        return redirect('get_categories')
+        return redirect('get_sizes')
 
 
 def view_profile(request):
@@ -232,3 +232,78 @@ def ajax_update_product(request, category_id, product_id):
     data = dict()
     data['form_is_valid'] = True
     return JsonResponse(data)
+
+
+def view_materials(request):
+    materials = Material.objects.all()
+    context = {'materials': materials}
+    return render(request, 'view_materials.html', context)
+
+
+def delete_material(request, material_id):
+    material = Material.objects.get(pk=material_id)
+    material.delete()
+    return redirect('get_materials')
+
+
+def edit_material(request, material_id):
+    material = Material.objects.get(pk=material_id)
+    if request.method == 'POST':
+        material.name = request.POST['name']
+        material.description = request.POST['description']
+        material.amount = request.POST['amount']
+        material.save()
+        return redirect('get_materials')
+    else:
+        context = {"material": material}
+        return render(request, 'edit_material.html', context)
+
+
+def view_coatings(request):
+    coatings = Coating.objects.all()
+    context = {'coatings': coatings}
+    return render(request, 'view_coatings.html', context)
+
+
+def delete_coatings(request, coating_id):
+    coating = Coating.objects.get(pk=coating_id)
+    coating.delete()
+    return redirect('get_coatings')
+
+
+def edit_coating(request, coating_id):
+    coating = Coating.objects.get(pk=coating_id)
+    if request.method == 'POST':
+        coating.name = request.POST['name']
+        coating.description = request.POST['description']
+        coating.save()
+        return redirect('get_coatings')
+    else:
+        context = {"coating": coating}
+        return render(request, 'edit_coating.html', context)
+
+
+def get_sizes(request):
+    sizes = Size.objects.all()
+    context = {'sizes': sizes}
+    return render(request, 'view_sizes.html', context)
+
+
+def delete_size(request, size_id):
+    size = Size.objects.get(pk=size_id)
+    size.delete()
+    return redirect('get_sizes')
+
+
+def edit_size(request, size_id):
+    size = Size.objects.get(pk=size_id)
+    if request.method == 'POST':
+        size.length = request.POST['length']
+        size.width = request.POST['width']
+        size.height = request.POST['height']
+        size.weight = request.POST['weight']
+        size.save()
+        return redirect('get_sizes')
+    else:
+        context = {"size": size}
+        return render(request, 'edit_size.html', context)
