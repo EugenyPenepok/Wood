@@ -1,15 +1,114 @@
 {% extends "base.html" %}
 {% block rows %}
 
-    {% load static %}
-
+{% load static %}
+    <!-- Custom CSS -->
     <link href="/css/product.css" rel="stylesheet">
 	
 	<!-- Custom Fonts -->
 	<link href="/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 	<link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
-
-    {% include 'edit_product.html' %}
+	
+	<!-- Редактирование изделия -->
+<div class="modal fade" data-modal-color="lightgreen" id="EditModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+	<div class="modal-content">
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		<h4 class="modal-title">Редактирование изделия</h4>
+	  </div>
+	<form id="edit" method="POST" action="/category/{{category_id}}/product/{{product.id}}">
+	<input type="hidden" name="_method" value="PUT">
+	  <div class="modal-body">
+		<div class="row row-offcanvas row-offcanvas-right">
+			<div class="col-xs-12 col-sm-12">
+				<div class="row">
+					<div class="form-group col-sm-6">
+						<label for="inputName">Название</label>
+						{%  if product is defined %}	
+							<input name="name" id="inputName" class="form-control" type="text" value="{{product.Name}}">
+						{% else %}
+							<input name="name" id="inputName" class="form-control" type="text">
+						{% endif %}
+					</div>
+					<div class="form-group col-sm-6">
+						<label for="inputPrice">Цена</label>
+						{%  if product is defined %}
+							<input name="price" id="inputPrice" class="form-control" type="number" min="0" value="{{product.Price}}">
+						{% else %}
+							<input name="price" id="inputPrice" class="form-control" type="number" min="0" value="0">
+						{% endif %}
+					</div>
+					<div class="form-group col-sm-6">
+						<label for="inputAmount">Количество</label>
+						{%  if product is defined %}
+							<input name="amount" id="inputAmount" class="form-control" type="number" min="0" value="{{product.Amount}}">
+						{% else %}
+							<input name="amount" id="inputAmount" class="form-control" type="number" min="0" value="0">
+						{% endif %}
+					</div>
+				</div>
+				
+				<div class="row">
+					<div class="form-group col-sm-6">
+						<label for="description">Описание</label>
+						<textarea name="comment" class="form-control" id="description" rows="8">
+						{%  if product is defined %}
+							{{product.Comment}}
+						{% endif %}
+						</textarea>
+					</div>
+				</div>
+				
+				<div class="row">										
+					<div class="form-group col-sm-6">
+						<label for="MaterialsMultiSelect">Материалы</label>
+						{% for m in materials %}
+							<br>
+								{% if m.selected == 1 %}
+								<input name="materials[]" value="{{m.id}}" type="checkbox" checked="">{{m.Name}}</input>
+								{% else %}
+								<input name="materials[]" value="{{m.id}}" type="checkbox">{{m.Name}}</input>
+								{% endif %}
+						{% endfor %}
+					</div>
+					
+					<div class="form-group col-sm-6">
+						<label for="sizesMultiSelect">Размеры</label>
+						{% for s in sizes %}
+							<br>
+							{% if s.selected == 1 %}
+							<input name="sizes[]" value="{{s.id}}" type="checkbox" checked="">{{s.dims}}</input>
+							{% else %}
+							<input name="sizes[]" value="{{s.id}}" type="checkbox">{{s.dims}}</input>
+							{% endif %}									
+						{% endfor %}
+					</div>
+					
+					<div class="form-group col-sm-6">
+						<label for="coversMultiSelect">Покрытия</label>
+						{% for c in covers %}
+							<br>
+							{% if c.selected == 1 %}
+							<input name="covers[]" value="{{c.id}}" type="checkbox" checked="">{{c.Name}}</input>
+							{% else %}
+							<input name="covers[]" value="{{c.id}}" type="checkbox">{{c.Name}}</input>
+							{% endif %}
+						{% endfor %}
+					</div>
+				</div>
+				
+			</div>
+		</div>
+	  </div>
+	  <div class="modal-footer">
+		<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+		<button type="submit" class="btn btn-primary">Создать</button>
+	  </div>
+	</form>
+	</div>
+  </div>
+</div>
 	
 	<div class="catalog-header">
 		<div class="col-lg-12">
@@ -24,96 +123,93 @@
 	</div>
 	
 	<div class="container">
-        <div class="card">
-            <div class="container-fliud">
-                <div class="wrapper row">
-                    <div class="preview col-md-6">
+    <div class="card">
+        <div class="container-fliud">
+            <div class="wrapper row">
+                <div class="preview col-md-6">
 
-                        <div class="preview-pic tab-content">
-                            {% load staticfiles %}
-                            <div class="tab-pane active" id="pic-1"><img src="{{ product.product_image.url }}" /></div>
-                            <!--div class="tab-pane" id="pic-2"><img src="/img/product/prod{{product.id}}/2.jpg" /></div>
-                            <div class="tab-pane" id="pic-3"><img src="/img/product/prod{{product.id}}/3.jpg" /></div>
-                            <div class="tab-pane" id="pic-4"><img src="/img/product/prod{{product.id}}/4.jpg" /></div>
-                            <div class="tab-pane" id="pic-5"><img src="/img/product/prod{{product.id}}/5.jpg" /></div-->
-                        </div>
-                        <!--ul class="preview-thumbnail nav nav-tabs">
-                            <li class="active"><a data-target="#pic-1" data-toggle="tab"><img src="/img/product/prod{{product.id}}/1.jpg" /></a></li>
-                            <li><a data-target="#pic-2" data-toggle="tab"><img src="/img/product/prod{{product.id}}/2.jpg" /></a></li>
-                            <li><a data-target="#pic-3" data-toggle="tab"><img src="/img/product/prod{{product.id}}/3.jpg" /></a></li>
-                            <li><a data-target="#pic-4" data-toggle="tab"><img src="/img/product/prod{{product.id}}/4.jpg" /></a></li>
-                            <li><a data-target="#pic-5" data-toggle="tab"><img src="/img/product/prod{{product.id}}/5.jpg" /></a></li>
-                        </ul-->
+                    <div class="preview-pic tab-content">
+                        {% load staticfiles %}
+                        <div class="tab-pane active" id="pic-1"><img src="{{ product.product_image.url }}" /></div>
+                        <!--div class="tab-pane" id="pic-2"><img src="/img/product/prod{{product.id}}/2.jpg" /></div>
+                        <div class="tab-pane" id="pic-3"><img src="/img/product/prod{{product.id}}/3.jpg" /></div>
+                        <div class="tab-pane" id="pic-4"><img src="/img/product/prod{{product.id}}/4.jpg" /></div>
+                        <div class="tab-pane" id="pic-5"><img src="/img/product/prod{{product.id}}/5.jpg" /></div-->
                     </div>
+                    <!--ul class="preview-thumbnail nav nav-tabs">
+                        <li class="active"><a data-target="#pic-1" data-toggle="tab"><img src="/img/product/prod{{product.id}}/1.jpg" /></a></li>
+                        <li><a data-target="#pic-2" data-toggle="tab"><img src="/img/product/prod{{product.id}}/2.jpg" /></a></li>
+                        <li><a data-target="#pic-3" data-toggle="tab"><img src="/img/product/prod{{product.id}}/3.jpg" /></a></li>
+                        <li><a data-target="#pic-4" data-toggle="tab"><img src="/img/product/prod{{product.id}}/4.jpg" /></a></li>
+                        <li><a data-target="#pic-5" data-toggle="tab"><img src="/img/product/prod{{product.id}}/5.jpg" /></a></li>
+                    </ul-->
 
-                    <div class="details col-md-6">
-                        <h4>Количество изделий на складе: {{ product.amount }}.</h4>
-                        <p class="product-description">{{ product.description }}</p>
 
-                        <div class="form-group">
-                            <label for="material_selector" class="col-sm-2 control-label">Материал</label>
-                            <div class="col-sm-9">
-                                <select class="form-control"
-                                        id="material_selector"
-                                        data-url="{% url 'ajax_update_product' category_id product.id %}">
-                                {% for m in materials %}
-                                    <option>{{ m.name }}</option>
-                                {% endfor %}
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="sizeSelector" class="col-sm-2 control-label">Размер</label>
-                            <div class="col-sm-9">
-                                <select class="form-control" id="sizeSelector">
-                                {% for s in size %}
-                                    <option>{{ s.dims }}</option>
-                                {% endfor %}
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="floorSelector" class="col-sm-2 control-label">Покрытие</label>
-                            <div class="col-sm-9">
-                                <select class="form-control" id="floorSelector">
-                                {% for c in cover %}
-                                    <option>{{ c.Name }}</option>
-                                {% endfor %}
-                                </select>
-                            </div>
-                        </div>
-
-                        <h4 class="price">Цена: <span>{{ product.Price }}<i class="fa fa-ruble fa-fw"></i></span></h4>
-                        <!-- <p class="vote"><strong>95%</strong> покупателей одобряют <strong>(87 голосов)</strong></p> -->
-
-                        <div class="action">
-                            {% if user.is_superuser %}
-                                <form method="GET" action="{% url 'concrete_product_create' category_id product.id %}">
-                                    <button type="submit" class="btn btn-primary">Добавить конкретный продукт</button>
-                                </form>
-                                <br>
-                                <form method="GET" action="/category/{{category_id}}/product/{{product.id}}">
-                                    <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#EditModal">Редактировать</button>
-                                </form>
-                                <br>
-                                <form method="POST" action="/category/{{category_id}}/product/{{product.id}}">
-                                    <input type="hidden" name="_method" value="DELETE">
-                                    <button type="submit" class="btn btn-danger">Удалить</button>
-                                </form>
-                            {% endif %}
-                            {% if not user.is_superuser %}
-                                <button class="add-to-cart my-cart-btn btn btn-default" type="button">
-                                Добавить в корзину
-                                </button>
-                            {% endif %}
-                            <!-- <button class="like btn btn-default" type="button"><span class="fa fa-heart"></span></button> -->
+                </div>
+                <div class="details col-md-6">
+					<h4>Количество изделий на складе: {{ product.amount }}.</h4>
+                    <p class="product-description">{{ product.description }}</p>
+                    <div class="form-group">
+                        <label for="materialSelector" class="col-sm-3 control-label">Материал</label>
+                        <div class="col-sm-9">
+                            <select class="form-control"
+                                    id="materialSelector"
+                                    data-url="{% url 'ajax_info_about_product' category_id product.id %}">
+							{% for m in materials %}
+                                <option>{{ m.name }}</option>
+							{% endfor %}
+                            </select>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label for="sizeSelector" class="col-sm-3 control-label">Размер</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" id="sizeSelector">
+							{% for s in size %}
+                                <option>{{ s.dims }}</option>
+							{% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="floorSelector" class="col-sm-3 control-label">Покрытие</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" id="floorSelector">
+							{% for c in cover %}
+                                <option>{{ c.Name }}</option>
+							{% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <h4 class="price">Цена: <span>{{ product.Price }}<i class="fa fa-ruble fa-fw"></i></span></h4>
+                    <!-- <p class="vote"><strong>95%</strong> покупателей одобряют <strong>(87 голосов)</strong></p> -->
+                    <div class="action">
+                        {% if user.is_superuser %}
+                            <form method="GET" action="{% url 'concrete_product_create' category_id product.id %}">
+                                <button type="submit" class="btn btn-primary">Добавить конкретный продукт</button>
+                            </form>
+                            <br>
+                            <form method="GET" action="/category/{{category_id}}/product/{{product.id}}">
+                                <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#EditModal">Редактировать</button>
+                            </form>
+                            <br>
+                            <form method="POST" action="/category/{{category_id}}/product/{{product.id}}">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <button type="submit" class="btn btn-danger">Удалить</button>
+                            </form>
+                        {% endif %}
+                        {% if not user.is_superuser %}
+                            <button class="add-to-cart my-cart-btn btn btn-default" type="button">
+                            Добавить в корзину
+                            </button>
+                        {% endif %}
+                        <!-- <button class="like btn btn-default" type="button"><span class="fa fa-heart"></span></button> -->
+                    </div>
+					
                 </div>
             </div>
-        </div>
+            </div>
     </div>
-    <script type="text/javascript" src="{% static 'js/ajax_update_product.js' %}"></script>
+</div>
 {% endblock %}
