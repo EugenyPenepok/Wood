@@ -24,8 +24,8 @@
                         </a>
                         <ul class="dropdown-menu">
                             {% if not user.is_superuser %}
-                                <li><a href="{% url 'view_profile' %}">Профиль</a></li>
-                                <li><a href="{% url 'view_orders' %}">Мои заказы</a></li>
+                                <li><a href="#">Профиль</a></li>
+                                <li><a href="#">Мои заказы</a></li>
                             {% else %}
                                 <li><a href="{% url 'material_create' %}">Материалы</a></li>
                                 <li><a href="{% url 'coating_create' %}">Покрытия</a></li>
