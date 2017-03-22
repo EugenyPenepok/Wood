@@ -1,3 +1,11 @@
+
+import django
+from django.core.exceptions import ObjectDoesNotExist
+from django.shortcuts import render, redirect
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+from django.contrib.auth import authenticate, login, logout
+
 import os
 
 from django.contrib.auth import authenticate, login, logout
@@ -5,6 +13,7 @@ from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.db.models import ProtectedError
 from django.http import HttpResponse
+
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 
@@ -78,22 +87,22 @@ def create_product(request, category_id):
                           description=request.POST['comment'],
                           product_image=image_file)
         product.save()
-        return redirect('get_categories')
+        return redirect('category_content', category_id)
 
 
-def get_product(request, category_id, product_id):
+def delete_product(request, category_id, product_id):
+    product = Product.objects.get(pk=product_id)
+    product.product_image.delete(save=True)
+    product.delete()
+    return redirect('category_content', category_id)
+
+
+def view_product(request, category_id, product_id):
     product = Product.objects.get(pk=product_id)
     concrete_products = ConcreteProduct.objects.filter(product_id=product_id)
-    materials = Material.objects.all()
-    for material in materials:
-        remove = True
-        for p in concrete_products:
-            if material.id == p.material_id:
-                remove = False
-        if remove:
-            materials.filter(id=material.id)
-    sizes = Size.objects.all()
-    coatings = Coating.objects.all()
+    materials = Material.objects.filter(concreteproduct__product=product).distinct()
+    sizes = Size.objects.filter(concreteproduct__product=product).distinct()
+    coatings = Coating.objects.filter(concreteproduct__product=product).distinct()
     context = {'category_id': category_id,
                'product': product,
                'concrete_products': concrete_products,
@@ -129,7 +138,7 @@ def create_concrete_product(request, category_id, product_id):
                                            coating=coating,
                                            size=size)
         concrete_product.save()
-        return redirect('get_categories')
+        return redirect('view_concrete_products', category_id, product_id)
 
 
 def create_personal_order(request):
@@ -261,17 +270,6 @@ def logout_user(request):
     return redirect('index')
 
 
-def ajax_update_product(request, category_id, product_id):
-    '''name_material = request.GET['material']
-    material = Material.objects.get(name=name_material)
-    product = Product.objects.get(pk=product_id)
-    concrete_products = ConcreteProduct.objects.filter(material=material).filter(product=product)
-    '''
-    data = dict()
-    data['form_is_valid'] = True
-    return JsonResponse(data)
-
-
 def view_materials(request):
     materials = Material.objects.all()
     context = {'materials': materials}
@@ -356,6 +354,72 @@ def edit_size(request, size_id):
         return render(request, 'edit_size.html', context)
 
 
+def ajax_update_product(request, product_id):
+    data = dict()
+    name_material = request.GET['name_material']
+    name_size = request.GET['name_size']
+    name_coating = request.GET['name_coating']
+    all_size = str(name_size).split('x')
+    size = Size.objects.get(width=all_size[0], height=all_size[1], length=all_size[2])
+    material = Material.objects.get(name=name_material)
+    coating = Coating.objects.get(name=name_coating)
+    product = Product.objects.get(pk=product_id)
+    concrete_products = ConcreteProduct.objects.filter(material=material).filter(product=product)
+    try:
+        concrete_product = ConcreteProduct.objects.get(product=product,
+                                                       size=size,
+                                                       coating=coating,
+                                                       material=material)
+    except ObjectDoesNotExist:
+        concrete_product = concrete_products.first()
+        size = concrete_product.size
+        material = concrete_product.material
+        coating = concrete_product.coating
+
+    if concrete_products:
+        materials = Material.objects.filter(concreteproduct__product=product).distinct()
+        sizes = Size.objects.\
+            filter(concreteproduct__material=material).\
+            filter(concreteproduct__product=product).\
+            filter(concreteproduct__coating=coating).distinct()
+        coatings = Coating.objects.\
+            filter(concreteproduct__size=size).\
+            filter(concreteproduct__material=material).\
+            filter(concreteproduct__product=product).\
+            distinct()
+        data['form_is_valid'] = True
+        data['html_info'] = render_to_string('product_info.html',
+                                             {
+                                                 'material': material,
+                                                 'size': size,
+                                                 'coating': coating,
+                                                 'product': product,
+                                                 'materials': materials,
+                                                 'sizes': sizes,
+                                                 'coatings': coatings,
+                                                 'amount': concrete_product.number,
+                                                 'price': concrete_product.price
+                                            })
+    else:
+        data['none'] = True
+    return JsonResponse(data)
+
+
+def view_concrete_products(request, category_id, product_id):
+    # product = Product.objects.get(pk=product_id)
+    concrete_products = ConcreteProduct.objects.filter(product_id=product_id)
+    context = {'concrete_products': concrete_products,
+               'category_id': category_id,
+               'product': Product.objects.get(pk=product_id)}
+    return render(request, 'view_concrete_products.html', context)
+
+
+def delete_concrete_product(request, category_id, product_id, concrete_product_id):
+    concrete_product = ConcreteProduct.objects.get(pk=concrete_product_id)
+    concrete_product.delete()
+    return redirect('view_concrete_products', category_id, product_id)
+
+  
 @login_required
 def change_password(request):
     if request.is_ajax():
@@ -407,3 +471,4 @@ def get_requirements(request, order_id):
             return HttpResponse(order.requirements)
     else:
         return HttpResponse(status=400)
+

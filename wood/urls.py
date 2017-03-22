@@ -17,14 +17,17 @@ urlpatterns = [
     url(r'^category/(?P<category_id>[0-9]+)/edit$', views.edit_category, name='category_edit'),
     url(r'^category/(?P<category_id>[0-9]+)$', views.get_products_in_category, name='category_content'),
 
-    url(r'^category/(?P<category_id>[0-9]+)/product/(?P<product_id>[0-9]+)$', views.get_product, name='product'),
-    url(r'^category/(?P<category_id>[0-9]+)/product/create$', views.create_product, name='product_create'),
-
-    url(r'^category/(?P<category_id>[0-9]+)/product/(?P<product_id>[0-9]+)/ajax_update_product',
-        views.ajax_update_product, name='ajax_update_product'),
+    url(r'^category/(?P<category_id>[0-9]+)/product/(?P<product_id>[0-9]+)$', views.view_product, name='view_product'),
+    url(r'^category/(?P<category_id>[0-9]+)/product/create$', views.create_product, name='create_product'),
+    url(r'^category/(?P<category_id>[0-9]+)/product/(?P<product_id>[0-9]+)/delete$',
+        views.delete_product, name='delete_product'),
 
     url(r'^category/(?P<category_id>[0-9]+)/product/(?P<product_id>[0-9]+)/concrete/create$',
         views.create_concrete_product, name='concrete_product_create'),
+    url(r'^category/(?P<category_id>[0-9]+)/product/(?P<product_id>[0-9]+)/concrete/view$',
+        views.view_concrete_products, name='view_concrete_products'),
+    url(r'^category/(?P<category_id>[0-9]+)/product/(?P<product_id>[0-9]+)/concrete/(?P<concrete_product_id>[0-9]+)/delete$',
+        views.delete_concrete_product, name='delete_concrete_product'),
 
     url(r'^material/create$', views.create_material, name='material_create'),
     url(r'^material/(?P<material_id>[0-9]+)/edit', views.edit_material, name='material_edit'),
@@ -44,6 +47,10 @@ urlpatterns = [
     url(r'^profile/view$', views.view_profile, name='view_profile'),
 
     url(r'^orders/view$', views.view_orders, name='view_orders'),
+
+
+    url(r'^category/[0-9]+/product/(?P<product_id>[0-9]+)/ajax_update_product',
+        views.ajax_update_product, name='ajax_update_product'),
 
     url(r'^profile/change_password', views.change_password, name='change_password'),
     url(r'^order/(?P<order_id>[0-9]+)/attachments', views.download_attachments, name='download_attachments'),

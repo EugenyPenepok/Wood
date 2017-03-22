@@ -7,7 +7,7 @@
     <div class="container form">
         <div class="col-xs-12 col-sm-12">
             <h4>Добавление нового изделия</h4>
-            <form method="POST" enctype="multipart/form-data" action="{% url 'product_create' category_id %}">
+            <form method="POST" enctype="multipart/form-data" action="{% url 'create_product' category_id %}">
                 {% csrf_token %}
 				
                 <div class="row">
