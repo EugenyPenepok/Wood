@@ -168,7 +168,7 @@ def create_coating(request):
         coating = Coating(name=request.POST['name'],
                           description=request.POST['description'])
         coating.save()
-        return redirect('get_categories')
+        return redirect('get_coatings')
 
 
 def create_size(request):
@@ -257,3 +257,27 @@ def edit_material(request, material_id):
     else:
         context = {"material": material}
         return render(request, 'edit_material.html', context)
+
+
+def view_coatings(request):
+    coatings = Coating.objects.all()
+    context = {'coatings': coatings}
+    return render(request, 'view_coatings.html', context)
+
+
+def delete_coatings(request, coating_id):
+    coating = Coating.objects.get(pk=coating_id)
+    coating.delete()
+    return redirect('get_coatings')
+
+
+def edit_coating(request, coating_id):
+    coating = Coating.objects.get(pk=coating_id)
+    if request.method == 'POST':
+        coating.name = request.POST['name']
+        coating.description = request.POST['description']
+        coating.save()
+        return redirect('get_coatings')
+    else:
+        context = {"coating": coating}
+        return render(request, 'edit_coating.html', context)

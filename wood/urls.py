@@ -32,6 +32,10 @@ urlpatterns = [
     url(r'^materials/$', views.view_materials, name='get_materials'),
 
     url(r'^coating/create$', views.create_coating, name='coating_create'),
+    url(r'^coating/(?P<coating_id>[0-9]+)/edit', views.edit_coating, name='coating_edit'),
+    url(r'^coating/(?P<coating_id>[0-9]+)/delete', views.delete_coatings, name='coating_delete'),
+    url(r'^coatings/$', views.view_coatings, name='get_coatings'),
+
     url(r'^size/create$', views.create_size, name='size_create'),
 
     url(r'^profile/view$', views.view_profile, name='view_profile'),
