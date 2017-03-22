@@ -9,6 +9,9 @@ class Category(models.Model):
     description = models.CharField(max_length=2000)
     image = models.ImageField(upload_to='images/categories/')
 
+    def __str__(self):
+        return self.name
+
 
 # Изделие
 class Product(models.Model):
@@ -18,12 +21,18 @@ class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.PROTECT)
     product_image = models.ImageField(upload_to='images/products/')
 
+    def __str__(self):
+        return self.name
+
 
 # Покрытие
 class Coating(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200)
     description = models.CharField(max_length=2000, blank=True, null=True)
+
+    def __str__(self):
+        return self.name
 
 
 # Материал
@@ -33,6 +42,8 @@ class Material(models.Model):
     description = models.CharField(max_length=2000, blank=True, null=True)
     amount = models.DecimalField(max_digits=13, decimal_places=3)
 
+    def __str__(self):
+        return self.name
 
 # Размер
 class Size(models.Model):
@@ -43,6 +54,9 @@ class Size(models.Model):
     height = models.IntegerField()
     # Вес в граммах
     weight = models.IntegerField()
+
+    def __str__(self):
+        return str(self.length) + 'x' + str(self.width) + 'x' + str(self.height)
 
 
 # Тип доставки
