@@ -46,4 +46,5 @@ urlpatterns = [
     url(r'^orders/view$', views.view_orders, name='view_orders'),
 
     url(r'^profile/change_password', views.change_password, name='change_password'),
+
 ]
