@@ -20,7 +20,7 @@ urlpatterns = [
     url(r'^category/(?P<category_id>[0-9]+)/product/(?P<product_id>[0-9]+)$', views.get_product, name='product'),
     url(r'^category/(?P<category_id>[0-9]+)/product/create$', views.create_product, name='product_create'),
 
-    url(r'^category/(?P<category_id>[0-9]+)/product/(?P<product_id>[0-9]+)/ajax_update_product',
+    url(r'^category/[0-9]+/product/(?P<product_id>[0-9]+)/ajax_update_product',
         views.ajax_update_product, name='ajax_update_product'),
 
     url(r'^category/(?P<category_id>[0-9]+)/product/(?P<product_id>[0-9]+)/concrete/create$',

@@ -1,23 +1,24 @@
 $(function () {
 
     var update_product = function() {
-        var select = $(this);
+        var material = $('#material_selector');
+        var size = $('#size_selector');
+        var coating = $('#coating_selector');
         $.ajax({
-            url: select.attr("data-url"),
+            url: $(this).attr("data-url"),
             type: "get",
-            data: {"name_material": select.val()},
+            data: {"name_material": material.val(),
+                "name_size": size.val(),
+                "name_coating": coating.val()
+            },
             dataType: 'json',
             cache: false,
             success: function(data){
-                if(data.none){  // смотрим ответ от сервера и выполняем соответствующее действие
-                    alert("Нет изделий с такими параметрами.");
-                }else{
-                    //$("#plants-blog").html(data.html_plants_blog);
-                    alert("Есть изделия.");
-                }
+                $("#product_info").html(data.html_info);
             }
         });
     };
 
-    $("#material_selector").on("change", update_product);
+    $("#product_info").on('change', "#material_selector, #size_selector, #coating_selector" , update_product);
+    //$("#product_info").on('change', '#material_selector', update_product);
 });

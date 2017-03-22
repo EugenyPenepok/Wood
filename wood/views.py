@@ -1,8 +1,10 @@
+import django
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, redirect
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.contrib.auth import authenticate, login, logout
-from django.core import serializers
+from django.template.loader import render_to_string
 from django.http import JsonResponse
 
 # Create your views here.
@@ -79,16 +81,9 @@ def create_product(request, category_id):
 def get_product(request, category_id, product_id):
     product = Product.objects.get(pk=product_id)
     concrete_products = ConcreteProduct.objects.filter(product_id=product_id)
-    materials = Material.objects.all()
-    for material in materials:
-        remove = True
-        for p in concrete_products:
-            if material.id == p.material_id:
-                remove = False
-        if remove:
-            materials.filter(id=material.id)
-    sizes = Size.objects.all()
-    coatings = Coating.objects.all()
+    materials = Material.objects.filter(concreteproduct__product=product).distinct()
+    sizes = Size.objects.filter(concreteproduct__product=product).distinct()
+    coatings = Coating.objects.filter(concreteproduct__product=product).distinct()
     context = {'category_id': category_id,
                'product': product,
                'concrete_products': concrete_products,
@@ -224,23 +219,6 @@ def logout_user(request):
     return redirect('index')
 
 
-def ajax_update_product(request, category_id, product_id):
-    data = dict()
-    name_material = request.GET['name_material']
-    material = Material.objects.get(name=name_material)
-    product = Product.objects.get(pk=product_id)
-    concrete_products = ConcreteProduct.objects.filter(material=material).filter(product=product)
-    if concrete_products:
-        sizes = Size.objects.filter(concreteproduct__material=material).filter(concreteproduct__product=product)
-        coatings = Coating.objects.filter(concreteproduct__material=material).filter(concreteproduct__product=product)
-        data['form_is_valid'] = True
-        data['sizes'] = serializers.serialize("json", sizes)
-        data['coatings'] = serializers.serialize("json", coatings)
-    else:
-        data['none'] = True
-    return JsonResponse(data)
-
-
 def view_materials(request):
     materials = Material.objects.all()
     context = {'materials': materials}
@@ -314,3 +292,50 @@ def edit_size(request, size_id):
     else:
         context = {"size": size}
         return render(request, 'edit_size.html', context)
+
+
+def ajax_update_product(request, product_id):
+    data = dict()
+    name_material = request.GET['name_material']
+    name_size = request.GET['name_size']
+    name_coating = request.GET['name_coating']
+    all_size = str(name_size).split('x')
+    size = Size.objects.get(width=all_size[0], height=all_size[1], length=all_size[2])
+    material = Material.objects.get(name=name_material)
+    coating = Coating.objects.get(name=name_coating)
+    product = Product.objects.get(pk=product_id)
+    concrete_products = ConcreteProduct.objects.filter(material=material).filter(product=product)
+    try:
+        concrete_product = ConcreteProduct.objects.get(product=product,
+                                                       size=size,
+                                                       coating=coating,
+                                                       material=material)
+    except ObjectDoesNotExist:
+        concrete_product = concrete_products.first()
+        size = concrete_product.size
+        material = concrete_product.material
+        coating = concrete_product.coating
+
+    if concrete_products:
+        materials = Material.objects.filter(concreteproduct__product=product).distinct()
+        sizes = Size.objects.filter(concreteproduct__material=material).filter(concreteproduct__product=product).distinct()
+        coatings = Coating.objects.\
+            filter(concreteproduct__material=material).\
+            filter(concreteproduct__product=product).\
+            distinct()
+        data['form_is_valid'] = True
+        data['html_info'] = render_to_string('product_info.html',
+                                             {
+                                                 'material': material,
+                                                 'size': size,
+                                                 'coating': coating,
+                                                 'product': product,
+                                                 'materials': materials,
+                                                 'sizes': sizes,
+                                                 'coatings': coatings,
+                                                 'amount': concrete_product.number,
+                                                 'price': concrete_product.price
+                                            })
+    else:
+        data['none'] = True
+    return JsonResponse(data)

@@ -45,45 +45,9 @@
                     </div>
 
                     <div class="details col-md-6">
-                        <h4>Количество изделий на складе: {{ product.amount }}.</h4>
-                        <p class="product-description">{{ product.description }}</p>
-
-                        <div class="form-group">
-                            <label for="material_selector" class="col-sm-2 control-label">Материал</label>
-                            <div class="col-sm-9">
-                                <select class="form-control"
-                                        id="material_selector"
-                                        data-url="{% url 'ajax_update_product' category_id product.id %}">
-                                {% for m in materials %}
-                                    <option>{{ m.name }}</option>
-                                {% endfor %}
-                                </select>
-                            </div>
+                        <div id="product_info">
+                            {% include 'product_info.html' %}
                         </div>
-
-                        <div class="form-group">
-                            <label for="sizeSelector" class="col-sm-2 control-label">Размер</label>
-                            <div class="col-sm-9">
-                                <select class="form-control" id="sizeSelector">
-                                {% for s in size %}
-                                    <option>{{ s.dims }}</option>
-                                {% endfor %}
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="floorSelector" class="col-sm-2 control-label">Покрытие</label>
-                            <div class="col-sm-9">
-                                <select class="form-control" id="floorSelector">
-                                {% for c in cover %}
-                                    <option>{{ c.Name }}</option>
-                                {% endfor %}
-                                </select>
-                            </div>
-                        </div>
-
-                        <h4 class="price">Цена: <span>{{ product.Price }}<i class="fa fa-ruble fa-fw"></i></span></h4>
                         <!-- <p class="vote"><strong>95%</strong> покупателей одобряют <strong>(87 голосов)</strong></p> -->
 
                         <div class="action">
