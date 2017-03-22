@@ -13,7 +13,7 @@
                     {% if form.errors %}
                         <p class="error">Сожалеем, вы неправильно ввели логин или пароль</p>
                     {% endif %}
-                    <div class="row">
+                    <div class="col-md-offset-1">
                             {% csrf_token %}
                             <label for="username">Логин:</label>
                             <input type="text" name="username" value="" id="username">
