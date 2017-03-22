@@ -1,10 +1,12 @@
-from django.shortcuts import render, redirect
-from django.core.files.storage import default_storage
-from django.core.files.base import ContentFile
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.db import IntegrityError
+from django.db import transaction
+from django.db.models import ProtectedError
+from django.http import HttpResponse
 from django.http import JsonResponse
+from django.shortcuts import render, redirect
 
-# Create your views here.
 from wood.models import *
 
 
@@ -55,6 +57,8 @@ def edit_category(request, category_id):
 
 def delete_category(request, category_id):
     category = Category.objects.get(pk=category_id)
+    if Product.objects.filter(category=category).exists():
+        return error(request, 'Невозможно удалить категорию в которой есть продукты')
     category.image.delete(save=True)
     category.delete()
     return redirect('get_categories')
@@ -184,7 +188,29 @@ def create_size(request):
 
 
 def view_profile(request):
-    return render(request, 'view_profile.html')
+    user = request.user
+    client = Client.objects.get(user=user)
+    if request.method == 'GET':
+        context = {'username': user.username,
+                   'last_name': user.last_name,
+                   'first_name': user.first_name,
+                   'email': user.email,
+                   'skype': client.skype,
+                   'telephone': client.telephone,
+                   'postcode': client.postcode,
+                   'address': client.address}
+        return render(request, 'view_profile.html', context)
+    else:
+        user.first_name = request.POST['first_name']
+        user.last_name = request.POST['last_name']
+        user.email = request.POST['email']
+        user.save()
+        client.skype = request.POST['skype']
+        client.telephone = request.POST['telephone']
+        client.postcode = request.POST['postcode']
+        client.address = request.POST['address']
+        client.save()
+        return redirect('view_profile')
 
 
 def view_orders(request):
@@ -195,24 +221,31 @@ def registration(request):
     if request.method == 'GET':
         return render(request, 'create_user.html')
     else:
-        user = User.objects.create_user(username=request.POST['username'],
-                                        email=request.POST['email'],
-                                        password=request.POST['password'],
-                                        first_name=request.POST['first_name'],
-                                        last_name=request.POST['last_name'],
-                                        )
-        user.save()
+        try:
+            user = User.objects.create_user(username=request.POST['username'],
+                                            email=request.POST['email'],
+                                            password=request.POST['password'],
+                                            first_name=request.POST['first_name'],
+                                            last_name=request.POST['last_name'],
+                                            )
+            user.save()
+        except IntegrityError:
+            return error(request, 'Пользователь с таким никнеймом уже существует')
         client = Client(user=user,
                         telephone=request.POST['telephone'],
                         skype=request.POST['skype'],
                         postcode=request.POST['postcode'],
                         address=request.POST['address'])
+
         client.save()
         return redirect('index')
 
 
 def login_user(request):
-    user = authenticate(username=request.POST['username'], password=request.POST['password'])
+    try:
+        user = authenticate(username=request.POST['username'], password=request.POST['password'])
+    except AttributeError:
+        return error(request, 'Неверный пароль')
     if user.is_active:
         login(request, user)
     return redirect('index')
@@ -242,7 +275,10 @@ def view_materials(request):
 
 def delete_material(request, material_id):
     material = Material.objects.get(pk=material_id)
-    material.delete()
+    try:
+        material.delete()
+    except ProtectedError:
+        return error(request, 'Удаляемый материал используется для изделий')
     return redirect('get_materials')
 
 
@@ -267,7 +303,10 @@ def view_coatings(request):
 
 def delete_coatings(request, coating_id):
     coating = Coating.objects.get(pk=coating_id)
-    coating.delete()
+    try:
+        coating.delete()
+    except ProtectedError:
+        return error(request, 'Удаляемое покрытие используется для изделий')
     return redirect('get_coatings')
 
 
@@ -291,7 +330,10 @@ def get_sizes(request):
 
 def delete_size(request, size_id):
     size = Size.objects.get(pk=size_id)
-    size.delete()
+    try:
+        size.delete()
+    except ProtectedError:
+        return error(request, 'Удаляемый размер используется для изделий')
     return redirect('get_sizes')
 
 
@@ -307,3 +349,33 @@ def edit_size(request, size_id):
     else:
         context = {"size": size}
         return render(request, 'edit_size.html', context)
+
+
+@login_required
+def change_password(request):
+    if request.is_ajax():
+        try:
+            # extract new_password value from POST/JSON here, then
+
+            user = User.objects.get(username=request.user.username)
+
+        except User.DoesNotExist:
+            return HttpResponse("USER_NOT_FOUND")
+        else:
+            if not user.check_password(request.POST['old_password']):
+                return HttpResponse("Неверный пароль")
+            if request.POST['new_password'] != request.POST['confirm_password']:
+                return HttpResponse("Пароли не совпадают")
+            user.set_password(request.POST['new_password'])
+            user.save()
+
+            user = authenticate(username=request.user.username, password=request.POST['new_password'])
+            if user.is_active:
+                login(request, user)
+            return HttpResponse("OK")
+    else:
+        return HttpResponse(status=400)
+
+
+def error(request, error_message):
+    return render(request, 'error_page.html', context={'error_message': error_message})
