@@ -1,0 +1,55 @@
+<h4>Количество изделий на складе: {{ amount }}.</h4>
+<p class="product-description">{{ product.description }}</p>
+
+<div class="form-group">
+    <label for="material_selector" class="col-sm-2 control-label">Материал</label>
+    <div class="col-sm-9">
+        <select class="form-control"
+                id="material_selector"
+                data-url="{% url 'ajax_update_product' product.id %}">
+        {% for m in materials %}
+            {% if material == m %}
+                <option selected="selected">{{ m.name }}</option>
+            {% else %}
+                <option>{{ m.name }}</option>
+            {% endif %}
+        {% endfor %}
+        </select>
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="size_selector" class="col-sm-2 control-label">Размер</label>
+    <div class="col-sm-9">
+        <select class="form-control"
+                id="size_selector"
+                data-url="{% url 'ajax_update_product' product.id %}">
+        {% for s in sizes %}
+            {% if s == size %}
+                <option selected="selected">{{ s.width }}x{{ s.height }}x{{ s.length }}</option>
+            {% else %}
+                <option>{{ s.width }}x{{ s.height }}x{{ s.length }}</option>
+            {% endif %}
+        {% endfor %}
+        </select>
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="coating_selector" class="col-sm-2 control-label">Покрытие</label>
+    <div class="col-sm-9">
+        <select class="form-control"
+                id="coating_selector"
+                data-url="{% url 'ajax_update_product' product.id %}">
+        {% for c in coatings %}
+            {% if c == coating %}
+                <option selected="selected">{{ c.name }}</option>
+            {% else %}
+                <option>{{ c.name }}</option>
+            {% endif %}
+        {% endfor %}
+        </select>
+    </div>
+</div>
+
+<h4 class="price">Цена: <span>{{ price }}<i class="fa fa-ruble fa-fw"></i></span></h4>
