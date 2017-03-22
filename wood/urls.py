@@ -19,9 +19,8 @@ urlpatterns = [
 
     url(r'^category/(?P<category_id>[0-9]+)/product/(?P<product_id>[0-9]+)$', views.get_product, name='product'),
     url(r'^category/(?P<category_id>[0-9]+)/product/create$', views.create_product, name='product_create'),
-
-    url(r'^category/(?P<category_id>[0-9]+)/product/(?P<product_id>[0-9]+)/ajax_update_product',
-        views.ajax_update_product, name='ajax_update_product'),
+    url(r'^category/(?P<category_id>[0-9]+)/product/(?P<product_id>[0-9]+)/ajax_info_about_product$',
+        views.ajax_info_about_product, name='ajax_info_about_product'),
 
     url(r'^category/(?P<category_id>[0-9]+)/product/(?P<product_id>[0-9]+)/concrete/create$',
         views.create_concrete_product, name='concrete_product_create'),
@@ -41,7 +40,4 @@ urlpatterns = [
     url(r'^size/(?P<size_id>[0-9]+)/delete', views.delete_size, name='size_delete'),
     url(r'^sizes$', views.get_sizes, name='get_sizes'),
 
-    url(r'^profile/view$', views.view_profile, name='view_profile'),
-
-    url(r'^orders/view$', views.view_orders, name='view_orders'),
 ]
