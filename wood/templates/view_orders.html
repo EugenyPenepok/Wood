@@ -2,6 +2,8 @@
 {% block rows %}
     {% load static %}
 
+    {% include 'modal_orders_requirements.html' %}
+
     <div class="catalog-header">
         <div class="col-lg-12">
             <h1>Просмотр заказов</h1>
@@ -19,7 +21,6 @@
                 <table class="table">
                     <thead>
                     <tr>
-                        <th>#</th>
                         <th>Название</th>
                         <th>Категория</th>
                         <th>Дата</th>
@@ -33,8 +34,7 @@
                     <tbody>
                     <!-- тут цикл -->
                     <!-- TODO: цвет строки меняется в зависимости от статуса -->
-                    <tr class="success">
-                        <th scope="row">1</th>
+                    <tr>
                         <td>имечко</td>
                         <td>оооо</td>
                         <td>моя оборона</td>
@@ -54,7 +54,6 @@
                 <table class="table">
                     <thead>
                     <tr>
-                        <th>#</th>
                         <th>Описание</th>
                         <th>Вложения</th>
                         <th>Срок изготовления</th>
@@ -64,26 +63,28 @@
                     </thead>
 
                     <tbody>
-                    {% for order in orders %}
+                    {% for order in personal_orders %}
                         <tr>
-                            <th scope="row">1</th>
-                            {#						<td>#}
-                            {#                            <button type="submit" class="btn">Посмотреть</button>#}
-                            {#                        </td>#}
                             <td>
-                                {{ order.requirements }}
+                                <a data-toggle="modal" data-target="#modal_requirements">
+                                    <button class="btn btn-default order-btn" id = "{{ order.id }}">Посмотреть</button>
+                                </a>
                             </td>
-                            <td><a href="{% url 'download_attachments' order.id %}">Скачать вложения </a></td>
+                            <td>
+                                <a href="{% url 'download_attachments' order.id %}">
+                                    <button class="btn btn-primary">Скачать вложения</button>
+                                </a>
+                            </td>
                             <td>Не на этой итерации</td>
                             <td>Не на этой итерации</td>
                             <td>Не на этой итерации</td>
                         </tr>
                     {% endfor %}
-                    <!-- тут эндфор -->
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
-
+    <script type='text/javascript' src="{% static "/js/jquery.js" %}"></script>
+    <script type='text/javascript' src="{% static "/js/ajax_get_requirements.js" %}"></script>
 {% endblock %}
