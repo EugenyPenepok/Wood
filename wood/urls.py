@@ -53,6 +53,8 @@ urlpatterns = [
 
     url(r'^category/[0-9]+/product/(?P<product_id>[0-9]+)/ajax_update_product',
         views.ajax_update_product, name='ajax_update_product'),
+    url(r'^category/[0-9]+/product/(?P<product_id>[0-9]+)/ajax_update_button_add',
+        views.ajax_update_button_add, name='ajax_update_button_add'),
 
     url(r'^profile/change_password', views.change_password, name='change_password'),
     url(r'^order/(?P<order_id>[0-9]+)/attachments', views.download_attachments, name='download_attachments'),

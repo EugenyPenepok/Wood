@@ -1,5 +1,6 @@
 from django.core.exceptions import ObjectDoesNotExist
 import os
+import json
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -10,7 +11,7 @@ from django.http import HttpResponse
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
-
+from django.core import serializers
 from wood.models import *
 
 
@@ -413,6 +414,30 @@ def ajax_update_product(request, product_id):
                                              })
     else:
         data['none'] = True
+    return JsonResponse(data)
+
+
+def ajax_update_button_add(request, product_id):
+    data = dict()
+    name_material = request.GET['name_material']
+    name_size = request.GET['name_size']
+    name_coating = request.GET['name_coating']
+    all_size = str(name_size).split('x')
+    size = Size.objects.get(width=all_size[0], height=all_size[1], length=all_size[2])
+    material = Material.objects.get(name=name_material)
+    coating = Coating.objects.get(name=name_coating)
+    product = Product.objects.get(pk=product_id)
+    data['form_is_valid'] = True
+    concrete_product = ConcreteProduct.objects.get(product=product,
+                                                   size=size,
+                                                   coating=coating,
+                                                   material=material)
+    data['id'] = concrete_product.id
+    data['product'] = concrete_product.product.name
+    data['inform'] = concrete_product.material.name + '\n' + concrete_product.size.__str__() \
+                   + '\n' + concrete_product.coating.name
+    data['price'] = concrete_product.price
+    data['image'] = concrete_product.product.product_image.url
     return JsonResponse(data)
 
 
