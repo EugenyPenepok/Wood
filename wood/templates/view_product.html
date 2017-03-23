@@ -47,31 +47,34 @@
                             {% include 'product_info.html' %}
                         </div>
                         <!-- <p class="vote"><strong>95%</strong> покупателей одобряют <strong>(87 голосов)</strong></p> -->
-
-                        <div class="action">
-                            {% if user.is_superuser %}
-                                <form method="GET" action="{% url 'view_concrete_products' category_id product.id %}">
-                                    <button type="submit" class="btn btn-warning">Все изделия</button>
-                                </form>
-                                <br>
-                                <form method="GET" action="{% url 'edit_product' category_id product.id %}">
-                                    <button type="submit" class="btn btn-success">Редактировать</button>
-                                </form>
-                                <br>
-                            {% endif %}
-                            {% if not user.is_superuser %}
-                                <button class="add-to-cart my-cart-btn btn btn-default"
-                                        data-id=""
-                                        data-summary=""
-                                        data-price=""
-                                        data-quantity=""
-                                        data-image=""
-                                        type="button">
-                                    Добавить в корзину
-                                </button>
-                            {% endif %}
-                            <!-- <button class="like btn btn-default" type="button"><span class="fa fa-heart"></span></button> -->
-                        </div>
+                        {% if user.is_superuser %}
+                            <form method="GET" action="{% url 'view_concrete_products' category_id product.id %}">
+                                <button type="submit" class="btn btn-warning">Все изделия</button>
+                            </form>
+                            <br>
+                            <form method="GET" action="{% url 'edit_product' category_id product.id %}">
+                                <button type="submit" class="btn btn-success">Редактировать</button>
+                            </form>
+                            <br>
+                        {% endif %}
+                        {% if not user.is_superuser %}
+                            {% load staticfiles %}
+                            <div id="button_add" data-url="{% url 'ajax_update_button_add' product.id %}">
+                                <div class="action">
+                                    <button id="btn" class="add-to-cart my-cart-btn btn btn-default"
+                                            data-id=""
+                                            data-name=""
+                                            data-summary=""
+                                            data-price=""
+                                            data-quantity=""
+                                            data-image=""
+                                            type="button">
+                                        Добавить в корзину
+                                    </button>
+                                </div>
+                            </div>
+                        {% endif %}
+                        <!-- <button class="like btn btn-default" type="button"><span class="fa fa-heart"></span></button> -->
                     </div>
                 </div>
             </div>
