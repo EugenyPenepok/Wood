@@ -115,14 +115,16 @@ def view_product(request, category_id, product_id):
     materials = Material.objects.filter(concreteproduct__product=product).distinct()
     sizes = Size.objects.filter(concreteproduct__product=product).distinct()
     coatings = Coating.objects.filter(concreteproduct__product=product).distinct()
+    amount = concrete_products.last().number if concrete_products.exists() else 0
+    price = concrete_products.last().price if concrete_products.exists() else ''
     context = {'category_id': category_id,
                'product': product,
                'concrete_products': concrete_products,
                'materials': materials,
                'sizes': sizes,
                'coatings': coatings,
-               'amount': concrete_products.last().number,
-               'price': concrete_products.last().price
+               'amount': amount,
+               'price': price
                }
     return render(request, 'view_product.html', context)
 
@@ -272,10 +274,10 @@ def registration(request):
 def login_user(request):
     try:
         user = authenticate(username=request.POST['username'], password=request.POST['password'])
+        if user.is_active:
+            login(request, user)
     except AttributeError:
         return error(request, 'Неверный пароль')
-    if user.is_active:
-        login(request, user)
     return redirect('index')
 
 
