@@ -4,24 +4,22 @@
     {% load static %}
 
     <!-- Custom Fonts -->
-	<link href="{% static 'font-awesome/css/font-awesome.min.css'%}" rel="stylesheet" type="text/css">
-	<link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
+    <link href="{% static 'font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
 
-    {% include 'edit_product.html' %}
-	
-	<div class="catalog-header">
-		<div class="col-lg-12">
-				<h1>{{ product.name }}</h1>
-		</div>
-	</div>
+    <div class="catalog-header">
+        <div class="col-lg-12">
+            <h1>{{ product.name }}</h1>
+        </div>
+    </div>
 
-	<div class = "container">
-		<div class = "row">
-			<img src = "{% static 'img/orn_product.png' %}" class="img-responsive center-block" />
-		</div>
-	</div>
-	
-	<div class="container">
+    <div class="container">
+        <div class="row">
+            <img src="{% static 'img/orn_product.png' %}" class="img-responsive center-block"/>
+        </div>
+    </div>
+
+    <div class="container">
         <div class="card">
             <div class="container-fliud">
                 <div class="wrapper row">
@@ -29,7 +27,7 @@
 
                         <div class="preview-pic tab-content">
                             {% load staticfiles %}
-                            <div class="tab-pane active" id="pic-1"><img src="{{ product.product_image.url }}" /></div>
+                            <div class="tab-pane active" id="pic-1"><img src="{{ product.product_image.url }}"/></div>
                             <!--div class="tab-pane" id="pic-2"><img src="/img/product/prod{{product.id}}/2.jpg" /></div>
                             <div class="tab-pane" id="pic-3"><img src="/img/product/prod{{product.id}}/3.jpg" /></div>
                             <div class="tab-pane" id="pic-4"><img src="/img/product/prod{{product.id}}/4.jpg" /></div>
@@ -49,21 +47,34 @@
                             {% include 'product_info.html' %}
                         </div>
                         <!-- <p class="vote"><strong>95%</strong> покупателей одобряют <strong>(87 голосов)</strong></p> -->
-
-                        <div class="action">
-                            {% if user.is_superuser %}
-                                <form method="GET" action="{% url 'view_concrete_products' category_id product.id %}">
-                                    <button type="submit" class="btn btn-warning">Все изделия</button>
-                                </form>
-                                <br>
-                            {% endif %}
-                            {% if not user.is_superuser %}
-                                <button class="add-to-cart my-cart-btn btn btn-default" type="button">
-                                Добавить в корзину
-                                </button>
-                            {% endif %}
-                            <!-- <button class="like btn btn-default" type="button"><span class="fa fa-heart"></span></button> -->
-                        </div>
+                        {% if user.is_superuser %}
+                            <form method="GET" action="{% url 'view_concrete_products' category_id product.id %}">
+                                <button type="submit" class="btn btn-warning">Все изделия</button>
+                            </form>
+                            <br>
+                            <form method="GET" action="{% url 'edit_product' category_id product.id %}">
+                                <button type="submit" class="btn btn-success">Редактировать</button>
+                            </form>
+                            <br>
+                        {% endif %}
+                        {% if not user.is_superuser %}
+                            {% load staticfiles %}
+                            <div id="button_add" data-url="{% url 'ajax_update_button_add' product.id %}">
+                                <div class="action">
+                                    <button id="btn" class="add-to-cart my-cart-btn btn btn-default"
+                                            data-id=""
+                                            data-name=""
+                                            data-summary=""
+                                            data-price=""
+                                            data-quantity=""
+                                            data-image=""
+                                            type="button">
+                                        Добавить в корзину
+                                    </button>
+                                </div>
+                            </div>
+                        {% endif %}
+                        <!-- <button class="like btn btn-default" type="button"><span class="fa fa-heart"></span></button> -->
                     </div>
                 </div>
             </div>

@@ -1,12 +1,6 @@
-
-import django
 from django.core.exceptions import ObjectDoesNotExist
-from django.shortcuts import render, redirect
-from django.core.files.storage import default_storage
-from django.core.files.base import ContentFile
-from django.contrib.auth import authenticate, login, logout
-
 import os
+import json
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -17,9 +11,9 @@ from django.http import HttpResponse
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
+from django.core import serializers
 
 from wood.models import *
-from wood_site.settings import STATIC_URL
 
 
 def index(request):
@@ -28,15 +22,15 @@ def index(request):
 
 def get_categories(request):
     categories = Category.objects.all()
-    context = {"categories": categories}
-    return render(request, "view_catalog.html", context)
+    context = {'categories': categories}
+    return render(request, 'view_catalog.html', context)
 
 
 def get_products_in_category(request, category_id):
     category = Category.objects.get(pk=category_id)
     products = Product.objects.filter(category_id=category_id)
-    context = {"products": products, "category": category}
-    return render(request, "view_products_in_category.html", context)
+    context = {'products': products, 'category': category}
+    return render(request, 'view_products_in_category.html', context)
 
 
 def create_category(request):
@@ -63,7 +57,7 @@ def edit_category(request, category_id):
         category.save()
         return redirect('get_categories')
     else:
-        context = {"category": category}
+        context = {'category': category}
         return render(request, 'edit_category.html', context)
 
 
@@ -78,7 +72,7 @@ def delete_category(request, category_id):
 
 def create_product(request, category_id):
     if request.method == 'GET':
-        context = {"category_id": category_id}
+        context = {'category_id': category_id}
         return render(request, 'create_product.html', context)
     elif request.method == 'POST':
         image_file = request.FILES['image']
@@ -89,6 +83,22 @@ def create_product(request, category_id):
                           product_image=image_file)
         product.save()
         return redirect('category_content', category_id)
+
+
+def edit_product(request, category_id, product_id):
+    if request.method == 'GET':
+        context = {'category_id': category_id, 'product': Product.objects.get(pk=product_id)}
+        return render(request, 'edit_product.html', context)
+    elif request.method == 'POST':
+        product = Product.objects.get(pk=product_id)
+        product.name = request.POST['name']
+        product.description = request.POST['comment']
+        image_file = request.FILES.get('image', False)
+        if image_file:
+            product.product_image.delete(save=True)
+            product.product_image = image_file
+        product.save()
+        return redirect('view_product', category_id, product_id)
 
 
 def delete_product(request, category_id, product_id):
@@ -111,6 +121,8 @@ def view_product(request, category_id, product_id):
                'materials': materials,
                'sizes': sizes,
                'coatings': coatings,
+               'amount': concrete_products.last().number,
+               'price': concrete_products.last().price
                }
     return render(request, 'view_product.html', context)
 
@@ -296,7 +308,7 @@ def edit_material(request, material_id):
         material.save()
         return redirect('get_materials')
     else:
-        context = {"material": material}
+        context = {'material': material}
         return render(request, 'edit_material.html', context)
 
 
@@ -323,7 +335,7 @@ def edit_coating(request, coating_id):
         coating.save()
         return redirect('get_coatings')
     else:
-        context = {"coating": coating}
+        context = {'coating': coating}
         return render(request, 'edit_coating.html', context)
 
 
@@ -352,7 +364,7 @@ def edit_size(request, size_id):
         size.save()
         return redirect('get_sizes')
     else:
-        context = {"size": size}
+        context = {'size': size}
         return render(request, 'edit_size.html', context)
 
 
@@ -380,14 +392,14 @@ def ajax_update_product(request, product_id):
 
     if concrete_products:
         materials = Material.objects.filter(concreteproduct__product=product).distinct()
-        sizes = Size.objects.\
-            filter(concreteproduct__material=material).\
-            filter(concreteproduct__product=product).\
+        sizes = Size.objects. \
+            filter(concreteproduct__material=material). \
+            filter(concreteproduct__product=product). \
             filter(concreteproduct__coating=coating).distinct()
-        coatings = Coating.objects.\
-            filter(concreteproduct__size=size).\
-            filter(concreteproduct__material=material).\
-            filter(concreteproduct__product=product).\
+        coatings = Coating.objects. \
+            filter(concreteproduct__size=size). \
+            filter(concreteproduct__material=material). \
+            filter(concreteproduct__product=product). \
             distinct()
         data['form_is_valid'] = True
         data['html_info'] = render_to_string('product_info.html',
@@ -401,9 +413,33 @@ def ajax_update_product(request, product_id):
                                                  'coatings': coatings,
                                                  'amount': concrete_product.number,
                                                  'price': concrete_product.price
-                                            })
+                                             })
     else:
         data['none'] = True
+    return JsonResponse(data)
+
+
+def ajax_update_button_add(request, product_id):
+    data = dict()
+    name_material = request.GET['name_material']
+    name_size = request.GET['name_size']
+    name_coating = request.GET['name_coating']
+    all_size = str(name_size).split('x')
+    size = Size.objects.get(width=all_size[0], height=all_size[1], length=all_size[2])
+    material = Material.objects.get(name=name_material)
+    coating = Coating.objects.get(name=name_coating)
+    product = Product.objects.get(pk=product_id)
+    data['form_is_valid'] = True
+    concrete_product = ConcreteProduct.objects.get(product=product,
+                                                   size=size,
+                                                   coating=coating,
+                                                   material=material)
+    data['id'] = concrete_product.id
+    data['product'] = concrete_product.product.name
+    data['inform'] = concrete_product.material.name + '\n' + concrete_product.size.__str__() \
+                   + '\n' + concrete_product.coating.name
+    data['price'] = concrete_product.price
+    data['image'] = concrete_product.product.product_image.url
     return JsonResponse(data)
 
 
@@ -421,7 +457,7 @@ def delete_concrete_product(request, category_id, product_id, concrete_product_i
     concrete_product.delete()
     return redirect('view_concrete_products', category_id, product_id)
 
-  
+
 @login_required
 def change_password(request):
     if request.is_ajax():
@@ -429,19 +465,19 @@ def change_password(request):
             user = User.objects.get(username=request.user.username)
 
         except User.DoesNotExist:
-            return HttpResponse("USER_NOT_FOUND")
+            return HttpResponse('USER_NOT_FOUND')
         else:
             if not user.check_password(request.POST['old_password']):
-                return HttpResponse("Неверный пароль")
+                return HttpResponse('Неверный пароль')
             if request.POST['new_password'] != request.POST['confirm_password']:
-                return HttpResponse("Пароли не совпадают")
+                return HttpResponse('Пароли не совпадают')
             user.set_password(request.POST['new_password'])
             user.save()
 
             user = authenticate(username=request.user.username, password=request.POST['new_password'])
             if user.is_active:
                 login(request, user)
-            return HttpResponse("OK")
+            return HttpResponse('OK')
     else:
         return HttpResponse(status=400)
 
@@ -455,7 +491,7 @@ def download_attachments(request, order_id):
 
     file_path = order.attachments.url[1:]
     with open(file_path, 'rb') as fh:
-        response = HttpResponse(fh.read(), content_type="application/")
+        response = HttpResponse(fh.read(), content_type='application/')
         response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
         return response
 
@@ -467,10 +503,9 @@ def get_requirements(request, order_id):
             user = User.objects.get(username=request.user.username)
 
         except User.DoesNotExist:
-            return HttpResponse("USER_NOT_FOUND")
+            return HttpResponse('USER_NOT_FOUND')
         else:
             order = PersonalOrder.objects.get(pk=order_id)
             return HttpResponse(order.requirements)
     else:
         return HttpResponse(status=400)
-

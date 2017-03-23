@@ -34,8 +34,10 @@
                 <img src="{{ prod.product_image.url }}" class="img-responsive center-block">
                 <div class="producttitle">{{prod.name}}</div>
                 <div class="productprice">
-                        <a href="{% url 'view_product' category.id prod.id %}" class="btn btn-primary btn-sm" role="button">Просмотреть</a>
+                    <a href="{% url 'view_product' category.id prod.id %}" class="btn btn-primary btn-sm" role="button">Просмотреть</a>
+                    {% if user.is_superuser %}
                         <a href="{% url 'delete_product' category.id prod.id %}" class="btn btn-danger btn-sm" role="button">Удалить</a>
+                    {% endif %}
                 </div>
             </div>
 		{% endfor %}
