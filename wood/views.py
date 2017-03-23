@@ -12,6 +12,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from django.core import serializers
+
 from wood.models import *
 
 
@@ -102,7 +103,8 @@ def edit_product(request, category_id, product_id):
 
 def delete_product(request, category_id, product_id):
     product = Product.objects.get(pk=product_id)
-    product.product_image.delete(save=True)
+    if ConcreteProduct.objects.filter(product=product).exists():
+        return error(request, 'В удаляемом изделии существуют конкретные изделия')
     product.delete()
     return redirect('category_content', category_id)
 
