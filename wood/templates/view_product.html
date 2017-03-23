@@ -43,9 +43,7 @@
                     </div>
 
                     <div class="details col-md-6">
-                        <div id="product_info">
-                            {% include 'product_info.html' %}
-                        </div>
+                        {% include 'product_info.html' %}
                         <!-- <p class="vote"><strong>95%</strong> покупателей одобряют <strong>(87 голосов)</strong></p> -->
                         {% if user.is_superuser %}
                             <form method="GET" action="{% url 'view_concrete_products' category_id product.id %}">
