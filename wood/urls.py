@@ -51,8 +51,12 @@ urlpatterns = [
 
     url(r'^orders/view$', views.view_orders, name='view_orders'),
 
-    url(r'^category/[0-9]+/product/(?P<product_id>[0-9]+)/ajax_update_product',
-        views.ajax_update_product, name='ajax_update_product'),
+    url(r'^category/[0-9]+/product/(?P<product_id>[0-9]+)/ajax_update_for_material',
+        views.ajax_update_for_materials, name='ajax_update_for_material'),
+    url(r'^category/[0-9]+/product/(?P<product_id>[0-9]+)/ajax_update_for_sizes',
+        views.ajax_update_for_sizes, name='ajax_update_for_sizes'),
+    url(r'^category/[0-9]+/product/(?P<product_id>[0-9]+)/ajax_update_for_coatings',
+        views.ajax_update_for_coatings, name='ajax_update_for_coatings'),
     url(r'^category/[0-9]+/product/(?P<product_id>[0-9]+)/ajax_update_button_add',
         views.ajax_update_button_add, name='ajax_update_button_add'),
 
