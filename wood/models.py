@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from decimal import Decimal
 
 
 # Категория
@@ -44,6 +45,7 @@ class Material(models.Model):
 
     def __str__(self):
         return self.name
+
 
 # Размер
 class Size(models.Model):
@@ -126,3 +128,37 @@ class PersonalOrder(models.Model):
     requirements = models.CharField(max_length=5000)
     attachments = models.FileField(upload_to='archives/personal_orders/')
     client = models.ForeignKey(Client, on_delete=models.PROTECT)
+
+
+class Cart(object):
+    def __init__(self, request):
+        self.session = request.session
+        cart = self.session.get('cart')
+        if not cart:
+            cart = self.session['cart'] = {}
+        self.cart = cart
+
+    def save(self):
+        self.session['cart'] = self.cart
+        self.session.modified = True
+
+    def add_concrete_product(self, concrete_product, quantity=1):
+        concrete_product_id = str(concrete_product.id)
+        if str(concrete_product_id) not in self.cart:
+            self.cart[concrete_product_id] = 0
+        self.cart[concrete_product_id] = quantity + self.cart[concrete_product_id]
+        self.save()
+        return self.cart[concrete_product_id]
+
+    def remove(self, concrete_product):
+        concrete_product_id = str(concrete_product.id)
+        if concrete_product.id in self.cart:
+            del self.cart[concrete_product_id]
+            self.save()
+
+    def __len__(self):
+        return sum(item for item in self.cart.values())
+
+    def clear(self):
+        del self.session['cart']
+        self.session.modified = True

@@ -55,24 +55,6 @@
                             </form>
                             <br>
                         {% endif %}
-                        {% if not user.is_superuser %}
-                            <div id="button_add" data-url="{% url 'ajax_update_button_add' product.id %}">
-                                <div class="action">
-                                    <button id="btn" class="add-to-cart my-cart-btn btn btn-default"
-                                            data-id="{{ concrete_product.id }}"
-                                            data-name="{{ concrete_product.product.name }}"
-                                            data-summary="{{ concrete_product.size.width }}x
-                                                          {{ concrete_product.size.height }}x
-                                                          {{ concrete_product.size.length }}"
-                                            data-price="{{ concrete_product.price }}"
-                                            data-quantity="1"
-                                            data-image="{{ concrete_product.product.product_image.url }}"
-                                            type="button">
-                                        Добавить в корзину
-                                    </button>
-                                </div>
-                            </div>
-                        {% endif %}
                         <!-- <button class="like btn btn-default" type="button"><span class="fa fa-heart"></span></button> -->
                     </div>
                 </div>
