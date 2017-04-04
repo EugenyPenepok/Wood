@@ -142,17 +142,25 @@ class Cart(object):
         self.session['cart'] = self.cart
         self.session.modified = True
 
-    def add_concrete_product(self, concrete_product, quantity=1):
+    def add_concrete_product(self, concrete_product, quantity=1, update=False):
         concrete_product_id = str(concrete_product.id)
         if str(concrete_product_id) not in self.cart:
             self.cart[concrete_product_id] = 0
-        self.cart[concrete_product_id] = quantity + self.cart[concrete_product_id]
+        if update:
+            self.cart[concrete_product_id] = quantity
+        else:
+            self.cart[concrete_product_id] += quantity
         self.save()
-        return self.cart[concrete_product_id]
 
-    def remove(self, concrete_product):
-        concrete_product_id = str(concrete_product.id)
-        if concrete_product.id in self.cart:
+    def get_summary_price(self):
+        summary = 0
+        for cp_id, quantity in self.cart.items():
+            cp = ConcreteProduct.objects.get(pk=cp_id)
+            summary += cp.price*quantity
+        return summary
+
+    def remove(self, concrete_product_id):
+        if concrete_product_id in self.cart:
             del self.cart[concrete_product_id]
             self.save()
 

@@ -21,6 +21,19 @@ def index(request):
     return render(request, 'index.html', {'quantity_in_cart': quantity_in_cart})
 
 
+def view_cart(request):
+    cart = Cart(request)
+    quantity_in_cart = len(cart)
+    concrete_products = []
+    for cp_id, cp_quantity in cart.cart.items():
+        cp = ConcreteProduct.objects.get(pk=cp_id)
+        concrete_products.append((cp, cp_quantity, cp.price*cp_quantity))
+    context = {'quantity_in_cart': quantity_in_cart,
+               'concrete_products': concrete_products,
+               'summary_price': cart.get_summary_price()}
+    return render(request, 'view_cart.html', context)
+
+
 def get_categories(request):
     cart = Cart(request)
     quantity_in_cart = len(cart)
@@ -477,7 +490,29 @@ def ajax_add_to_cart(request):
     cp_id = request.GET['id']
     concrete_product = ConcreteProduct.objects.get(pk=cp_id)
     data['form_is_valid'] = True
-    data['quantity'] = cart.add_concrete_product(concrete_product)
+    cart.add_concrete_product(concrete_product)
+    data['quantity'] = len(cart)
+    return JsonResponse(data)
+
+
+def delete_from_cart(request, cp_id):
+    data = dict()
+    cart = Cart(request)
+    cart.remove(cp_id)
+    return redirect('view_cart')
+
+
+def ajax_update_cart(request):
+    data = dict()
+    cart = Cart(request)
+    cp_id = request.POST['id']
+    quantity = request.POST['quantity']
+    concrete_product = ConcreteProduct.objects.get(pk=cp_id)
+    data['form_is_valid'] = True
+    cart.add_concrete_product(concrete_product, int(quantity), update=True)
+    data['quantity'] = len(cart)
+    data['price'] = concrete_product.price * int(quantity)
+    data['summary_price'] = cart.get_summary_price()
     return JsonResponse(data)
 
 

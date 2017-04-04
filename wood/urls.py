@@ -4,6 +4,7 @@ from . import views
 
 urlpatterns = [
     url(r'^$', views.index, name='index'),
+    url(r'^view_cart$', views.view_cart, name='view_cart'),
 
     url(r'^create_personal_order$', views.create_personal_order, name='create_personal_order'),
 
@@ -57,8 +58,14 @@ urlpatterns = [
         views.ajax_update_for_sizes, name='ajax_update_for_sizes'),
     url(r'^category/[0-9]+/product/(?P<product_id>[0-9]+)/ajax_update_for_coatings$',
         views.ajax_update_for_coatings, name='ajax_update_for_coatings'),
+
     url(r'^category/[0-9]+/product/[0-9]+/ajax_add_to_cart$',
         views.ajax_add_to_cart, name='ajax_add_to_cart'),
+    url(r'^(?P<cp_id>[0-9]+)/ajax_delete_from_cart$',
+        views.delete_from_cart, name='ajax_delete_from_cart'),
+    url(r'^ajax_update_cart$',
+        views.ajax_update_cart, name='ajax_update_cart'),
+
 
     url(r'^profile/change_password$', views.change_password, name='change_password'),
     url(r'^order/(?P<order_id>[0-9]+)/attachments$', views.download_attachments, name='download_attachments'),
