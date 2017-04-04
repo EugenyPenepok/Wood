@@ -197,7 +197,7 @@
                 '</div>' +
                 '<div class="modal-footer">' +
                 '<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>' +
-                '<button type="button" class="btn btn-primary ' + classCheckoutCart + '">Оплатить</button>' +
+                '<button type="button" class="btn btn-primary ' + classCheckoutCart + '">Оформить</button>' +
                 '</div>' +
                 '</div>' +
                 '</div>' +
@@ -217,7 +217,7 @@
                     '<td class="text-center" ><img src="' + this.image + '"/></td>' +
                     '<td>' + this.name + '</td>' +
                     '<td>' + this.summary + '</td>' +
-                    '<td class="text-center"><a  href="product' + this.id + '.html"><button class="btn btn-xs btn-success">Редактировать</button></a></td>' +
+                    // '<td class="text-center"><a  href="product' + this.id + '.html"><button class="btn btn-xs btn-success">Редактировать</button></a></td>' +
                     '<td title="Unit Price">$' + this.price + '</td>' +
                     '<td title="Quantity"><input type="number" min="1" class="' + classProductQuantity + '" value="' + this.quantity + '"/></td>' +
                     '<td title="Total" class="' + classProductTotal + '">$' + total + '</td>' +
@@ -229,8 +229,9 @@
             $cartTable.append(products.length ?
                 '<tr>' +
                 '<td></td>' +
-                '<td><strong>Итого</strong></td>' +
                 '<td></td>' +
+                '<td><strong>Итого</strong></td>' +
+                //'<td></td>' +
                 '<td></td>' +
                 '<td><strong id="' + idGrandTotal + '">$</strong></td>' +
                 '<td></td>' +
