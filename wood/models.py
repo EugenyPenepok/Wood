@@ -1,5 +1,7 @@
-from django.db import models
+import datetime
+
 from django.contrib.auth.models import User
+from django.db import models
 from decimal import Decimal
 
 
@@ -61,14 +63,6 @@ class Size(models.Model):
         return str(self.length) + 'x' + str(self.width) + 'x' + str(self.height)
 
 
-# Тип доставки
-class TypeOfDelivery(models.Model):
-    id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=200)
-    # Цена в копейках
-    price = models.IntegerField()
-
-
 # Клиент
 class Client(models.Model):
     id = models.AutoField(primary_key=True)
@@ -85,8 +79,6 @@ class Client(models.Model):
 # Изделие с конкретными параметрами
 class ConcreteProduct(models.Model):
     id = models.AutoField(primary_key=True)
-    # name = models.CharField(max_length=200)
-    # Цена в копейках
     price = models.IntegerField()
     number = models.IntegerField()
     time_production = models.IntegerField(blank=True, null=True)
@@ -106,11 +98,21 @@ class Image(models.Model):
 # Заказ
 class Order(models.Model):
     id = models.AutoField(primary_key=True)
-    date = models.DateField()
-    status = models.CharField(max_length=300)
-    information = models.CharField(max_length=5000)
+    date = models.DateField(default=datetime.datetime.now)
+    status_choise = (
+        ('Отменен', 'Отменен'),
+        ('Обрабатывается', 'Обрабатывается'),
+        ('Выполнен', 'Выполнен'),
+    )
+    status = models.CharField(max_length=15, choices=status_choise, default='Обрабатывается')
+    delivery_address = models.CharField(max_length=2000, blank=True, null=True)
+    payment = (
+        ('Наличный расчет', 'Наличный расчет'),
+        ('Безналичный расчет', 'Безналичный расчет')
+    )
+    payment_type = models.CharField(max_length=50, choices=payment)
     client = models.ForeignKey(Client, on_delete=models.PROTECT)
-    type_of_delivery = models.ForeignKey(TypeOfDelivery, on_delete=models.PROTECT)
+    need_delivery = models.BooleanField(default=False)
 
 
 # Позиция в заказе
@@ -128,6 +130,20 @@ class PersonalOrder(models.Model):
     requirements = models.CharField(max_length=5000)
     attachments = models.FileField(upload_to='archives/personal_orders/')
     client = models.ForeignKey(Client, on_delete=models.PROTECT)
+    need_delivery = models.BooleanField(default=False)
+    delivery_address = models.CharField(max_length=2000, blank=True, null=True)
+    date = models.DateField(default=datetime.datetime.now)
+    status_choise = (
+        ('Изготовлен', 'Изготовлен'),
+        ('Отменен', 'Отменен'),
+        ('Обрабатывается', 'Обрабатывается')
+    )
+    status = models.CharField(max_length=50, choices=status_choise, default='Обрабатывается')
+    payment = (
+        ('Наличный расчет', 'Наличный расчет'),
+        ('Безналичный расчет', 'Безналичный расчет')
+    )
+    payment_type = models.CharField(max_length=50, choices=payment)
 
 
 class Cart(object):

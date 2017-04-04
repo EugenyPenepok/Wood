@@ -197,9 +197,13 @@ def create_personal_order(request):
             client = Client(user=user, telephone=request.POST['telephone'])
             client.save()
         file = request.FILES['attachments']
+        need_delivery = 'isDelivered' in request.POST
         personal_order = PersonalOrder(client=client,
                                        requirements=request.POST['requirements'],
-                                       attachments=file)
+                                       attachments=file,
+                                       need_delivery=need_delivery,
+                                       delivery_address=request.POST['delivery_address'],
+                                       payment_type=request.POST['payment'])
         personal_order.save()
         return redirect('index')
 
@@ -267,19 +271,10 @@ def view_profile(request):
 
 
 def view_orders(request):
-    cart = Cart(request)
-    quantity_in_cart = len(cart)
-    if request.method == 'POST':
-        products = request.GET['products']
     client = Client.objects.get(user=request.user)
     personal_orders = PersonalOrder.objects.filter(client=client)
-    context = {'personal_orders': personal_orders,
-               'quantity_in_cart': quantity_in_cart}
-    page = render_to_string('view_orders.html', context)
-    data = dict()
-    data['form_is_valid'] = True
-    data['page'] = page
-    return JsonResponse(data)
+    context = {'personal_orders': personal_orders}
+    return render(request, 'view_orders.html', context)
 
 
 def registration(request):
