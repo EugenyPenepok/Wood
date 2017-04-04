@@ -68,9 +68,9 @@
                     </ul>
                 </li>
                     <li>
-                        <a>
-                        <span class="glyphicon glyphicon-shopping-cart my-cart-icon">
-                        <span class="badge badge-notify my-cart-badge"></span>
+                        <a href="{% url "view_cart" %}">
+                        <span class="glyphicon glyphicon-shopping-cart">
+                        <span class="badge badge-notify" id="counter">{{ quantity_in_cart }}</span>
                         </span>
                         </a>
                     </li>
