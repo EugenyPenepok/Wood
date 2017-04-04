@@ -1,5 +1,7 @@
-from django.db import models
+import datetime
+
 from django.contrib.auth.models import User
+from django.db import models
 
 
 # Категория
@@ -44,6 +46,7 @@ class Material(models.Model):
 
     def __str__(self):
         return self.name
+
 
 # Размер
 class Size(models.Model):
@@ -104,8 +107,17 @@ class Image(models.Model):
 # Заказ
 class Order(models.Model):
     id = models.AutoField(primary_key=True)
-    date = models.DateField()
-    status = models.CharField(max_length=300)
+    date = models.DateField(default=datetime.datetime.now)
+    produced = 'produced'
+    cancelled = 'cancelled'
+    waiting = 'waiting'
+    delivered = 'delivered'
+    status_choise = (
+        (cancelled, 'Отменен'),
+        (waiting, 'Обрабатывается'),
+        (delivered, 'Выполнен'),
+    )
+    status = models.CharField(max_length=15, choices=status_choise, default=waiting)
     information = models.CharField(max_length=5000)
     client = models.ForeignKey(Client, on_delete=models.PROTECT)
     type_of_delivery = models.ForeignKey(TypeOfDelivery, on_delete=models.PROTECT)
@@ -126,3 +138,15 @@ class PersonalOrder(models.Model):
     requirements = models.CharField(max_length=5000)
     attachments = models.FileField(upload_to='archives/personal_orders/')
     client = models.ForeignKey(Client, on_delete=models.PROTECT)
+    type_of_delivery = models.ForeignKey(TypeOfDelivery, on_delete=models.PROTECT)
+    date = models.DateField(default=datetime.datetime.now)
+    produced = 'produced'
+    cancelled = 'cancelled'
+    waiting = 'waiting'
+    delivered = 'delivered'
+    status_choise = (
+        (produced, 'Изготовлен'),
+        (cancelled, 'Отменен'),
+        (waiting, 'Ожидает одобрения')
+    )
+    status = models.CharField(max_length=15, choices=status_choise, default=waiting)
