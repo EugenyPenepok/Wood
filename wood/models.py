@@ -2,6 +2,7 @@ import datetime
 
 from django.contrib.auth.models import User
 from django.db import models
+from decimal import Decimal
 
 
 # Категория
@@ -138,7 +139,7 @@ class PersonalOrder(models.Model):
     requirements = models.CharField(max_length=5000)
     attachments = models.FileField(upload_to='archives/personal_orders/')
     client = models.ForeignKey(Client, on_delete=models.PROTECT)
-    type_of_delivery = models.ForeignKey(TypeOfDelivery, on_delete=models.PROTECT)
+type_of_delivery = models.ForeignKey(TypeOfDelivery, on_delete=models.PROTECT)
     date = models.DateField(default=datetime.datetime.now)
     produced = 'produced'
     cancelled = 'cancelled'
@@ -150,3 +151,10 @@ class PersonalOrder(models.Model):
         (waiting, 'Ожидает одобрения')
     )
     status = models.CharField(max_length=15, choices=status_choise, default=waiting)
+
+class Cart(object):
+    def __init__(self, request):
+        self.session = request.session
+        cart = self.session.get('cart')
+        if not cart:
+            cart = self.session['cart'] = {}

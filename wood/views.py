@@ -1,6 +1,5 @@
 from django.core.exceptions import ObjectDoesNotExist
 import os
-import json
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -17,19 +16,27 @@ from wood.models import *
 
 
 def index(request):
-    return render(request, 'index.html')
+    cart = Cart(request)
+    quantity_in_cart = len(cart)
+    return render(request, 'index.html', {'quantity_in_cart': quantity_in_cart})
 
 
 def get_categories(request):
+    cart = Cart(request)
+    quantity_in_cart = len(cart)
     categories = Category.objects.all()
-    context = {'categories': categories}
+    context = {'categories': categories,
+               'quantity_in_cart': quantity_in_cart}
     return render(request, 'view_catalog.html', context)
 
 
 def get_products_in_category(request, category_id):
+    cart = Cart(request)
+    quantity_in_cart = len(cart)
     category = Category.objects.get(pk=category_id)
     products = Product.objects.filter(category_id=category_id)
-    context = {'products': products, 'category': category}
+    context = {'products': products, 'category': category,
+               'quantity_in_cart': quantity_in_cart}
     return render(request, 'view_products_in_category.html', context)
 
 
@@ -110,21 +117,22 @@ def delete_product(request, category_id, product_id):
 
 
 def view_product(request, category_id, product_id):
+    cart = Cart(request)
+    quantity_in_cart = len(cart)
     product = Product.objects.get(pk=product_id)
     concrete_products = ConcreteProduct.objects.filter(product_id=product_id)
+    concrete_product = concrete_products.last()
     materials = Material.objects.filter(concreteproduct__product=product).distinct()
-    sizes = Size.objects.filter(concreteproduct__product=product).distinct()
-    coatings = Coating.objects.filter(concreteproduct__product=product).distinct()
-    amount = concrete_products.last().number if concrete_products.exists() else 0
-    price = concrete_products.last().price if concrete_products.exists() else ''
+    sizes = Size.objects.filter(concreteproduct=concrete_product).distinct()
+    coatings = Coating.objects.filter(concreteproduct__product=product, concreteproduct__size=sizes.last()).distinct()
     context = {'category_id': category_id,
                'product': product,
                'concrete_products': concrete_products,
+               'concrete_product': concrete_product,
                'materials': materials,
                'sizes': sizes,
                'coatings': coatings,
-               'amount': amount,
-               'price': price
+               'quantity_in_cart': quantity_in_cart
                }
     return render(request, 'view_product.html', context)
 
@@ -159,7 +167,9 @@ def create_concrete_product(request, category_id, product_id):
 
 def create_personal_order(request):
     if request.method == 'GET':
-        return render(request, 'create_personal_order.html')
+        cart = Cart(request)
+        quantity_in_cart = len(cart)
+        return render(request, 'create_personal_order.html', {'quantity_in_cart': quantity_in_cart})
     elif request.method == 'POST':
         if not request.user.is_anonymous():
             client = Client.objects.get(user=request.user)
@@ -215,6 +225,8 @@ def create_size(request):
 
 
 def view_profile(request):
+    cart = Cart(request)
+    quantity_in_cart = len(cart)
     user = request.user
     client = Client.objects.get(user=user)
     if request.method == 'GET':
@@ -225,7 +237,8 @@ def view_profile(request):
                    'skype': client.skype,
                    'telephone': client.telephone,
                    'postcode': client.postcode,
-                   'address': client.address}
+                   'address': client.address,
+                   'quantity_in_cart': quantity_in_cart}
         return render(request, 'view_profile.html', context)
     else:
         user.first_name = request.POST['first_name']
@@ -241,15 +254,26 @@ def view_profile(request):
 
 
 def view_orders(request):
+    cart = Cart(request)
+    quantity_in_cart = len(cart)
+    if request.method == 'POST':
+        products = request.GET['products']
     client = Client.objects.get(user=request.user)
     personal_orders = PersonalOrder.objects.filter(client=client)
-    context = {'personal_orders': personal_orders}
-    return render(request, 'view_orders.html', context)
+    context = {'personal_orders': personal_orders,
+               'quantity_in_cart': quantity_in_cart}
+    page = render_to_string('view_orders.html', context)
+    data = dict()
+    data['form_is_valid'] = True
+    data['page'] = page
+    return JsonResponse(data)
 
 
 def registration(request):
     if request.method == 'GET':
-        return render(request, 'create_user.html')
+        cart = Cart(request)
+        quantity_in_cart = len(cart)
+        return render(request, 'create_user.html', {'quantity_in_cart': quantity_in_cart})
     else:
         try:
             user = User.objects.create_user(username=request.POST['username'],
@@ -372,28 +396,24 @@ def edit_size(request, size_id):
 
 def ajax_update_for_materials(request, product_id):
     data = dict()
-
     name_material = request.GET['name_material']
-
     material = Material.objects.get(name=name_material)
     product = Product.objects.get(pk=product_id)
-
     sizes = Size.objects. \
-        filter(concreteproduct__material=material, concreteproduct__product=product)
-
+        filter(concreteproduct__material=material, concreteproduct__product=product).distinct()
     coatings = Coating.objects. \
-        filter(concreteproduct__material=material, concreteproduct__product=product)
-
+        filter(concreteproduct__material=material, concreteproduct__product=product).distinct()
     concrete_product = ConcreteProduct.objects.get(material=material,
                                                    product=product,
                                                    size=sizes.last(),
-                                                   coating=coatings.last())
+                                                   coating=coatings.first())
 
     data['form_is_valid'] = True
     data['sizes'] = serializers.serialize('json', sizes)
     data['coatings'] = serializers.serialize('json', coatings)
     data['price'] = concrete_product.price
     data['amount'] = concrete_product.number
+    data['concrete_product_id'] = concrete_product.id
 
     return JsonResponse(data)
 
@@ -421,6 +441,7 @@ def ajax_update_for_sizes(request, product_id):
     data['coatings'] = serializers.serialize('json', coatings)
     data['price'] = concrete_product.price
     data['amount'] = concrete_product.number
+    data['concrete_product_id'] = concrete_product.id
 
     return JsonResponse(data)
 
@@ -445,31 +466,18 @@ def ajax_update_for_coatings(request, product_id):
     data['form_is_valid'] = True
     data['price'] = concrete_product.price
     data['amount'] = concrete_product.number
+    data['concrete_product_id'] = concrete_product.id
 
     return JsonResponse(data)
 
 
-def ajax_update_button_add(request, product_id):
+def ajax_add_to_cart(request):
     data = dict()
-    name_material = request.GET['name_material']
-    name_size = request.GET['name_size']
-    name_coating = request.GET['name_coating']
-    all_size = str(name_size).split('x')
-    size = Size.objects.get(width=all_size[0], height=all_size[1], length=all_size[2])
-    material = Material.objects.get(name=name_material)
-    coating = Coating.objects.get(name=name_coating)
-    product = Product.objects.get(pk=product_id)
+    cart = Cart(request)
+    cp_id = request.GET['id']
+    concrete_product = ConcreteProduct.objects.get(pk=cp_id)
     data['form_is_valid'] = True
-    concrete_product = ConcreteProduct.objects.get(product=product,
-                                                   size=size,
-                                                   coating=coating,
-                                                   material=material)
-    data['id'] = concrete_product.id
-    data['product'] = concrete_product.product.name
-    data['inform'] = concrete_product.material.name + '\n' + concrete_product.size.__str__() \
-                     + '\n' + concrete_product.coating.name
-    data['price'] = concrete_product.price
-    data['image'] = concrete_product.product.product_image.url
+    data['quantity'] = cart.add_concrete_product(concrete_product)
     return JsonResponse(data)
 
 

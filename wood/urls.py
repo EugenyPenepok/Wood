@@ -51,16 +51,16 @@ urlpatterns = [
 
     url(r'^orders/view$', views.view_orders, name='view_orders'),
 
-    url(r'^category/[0-9]+/product/(?P<product_id>[0-9]+)/ajax_update_for_material',
+    url(r'^category/[0-9]+/product/(?P<product_id>[0-9]+)/ajax_update_for_material$',
         views.ajax_update_for_materials, name='ajax_update_for_material'),
-    url(r'^category/[0-9]+/product/(?P<product_id>[0-9]+)/ajax_update_for_sizes',
+    url(r'^category/[0-9]+/product/(?P<product_id>[0-9]+)/ajax_update_for_sizes$',
         views.ajax_update_for_sizes, name='ajax_update_for_sizes'),
-    url(r'^category/[0-9]+/product/(?P<product_id>[0-9]+)/ajax_update_for_coatings',
+    url(r'^category/[0-9]+/product/(?P<product_id>[0-9]+)/ajax_update_for_coatings$',
         views.ajax_update_for_coatings, name='ajax_update_for_coatings'),
-    url(r'^category/[0-9]+/product/(?P<product_id>[0-9]+)/ajax_update_button_add',
-        views.ajax_update_button_add, name='ajax_update_button_add'),
+    url(r'^category/[0-9]+/product/[0-9]+/ajax_add_to_cart$',
+        views.ajax_add_to_cart, name='ajax_add_to_cart'),
 
-    url(r'^profile/change_password', views.change_password, name='change_password'),
-    url(r'^order/(?P<order_id>[0-9]+)/attachments', views.download_attachments, name='download_attachments'),
-    url(r'^order/(?P<order_id>[0-9]+)/requirements', views.get_requirements, name='get_requirements'),
+    url(r'^profile/change_password$', views.change_password, name='change_password'),
+    url(r'^order/(?P<order_id>[0-9]+)/attachments$', views.download_attachments, name='download_attachments'),
+    url(r'^order/(?P<order_id>[0-9]+)/requirements$', views.get_requirements, name='get_requirements'),
 ]
