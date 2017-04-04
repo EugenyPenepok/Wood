@@ -65,8 +65,10 @@ urlpatterns = [
     url(r'^ajax_update_cart$',
         views.ajax_update_cart, name='ajax_update_cart'),
 
-
     url(r'^profile/change_password$', views.change_password, name='change_password'),
     url(r'^order/(?P<order_id>[0-9]+)/attachments$', views.download_attachments, name='download_attachments'),
     url(r'^order/(?P<order_id>[0-9]+)/requirements$', views.get_requirements, name='get_requirements'),
+    url(r'^order/change', views.change_order, name='change_order'),
+    url(r'^order/(?P<order_id>[0-9]+)/cancel', views.cancel_order, name='cancel_order'),
+
 ]

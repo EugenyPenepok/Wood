@@ -577,3 +577,20 @@ def get_requirements(request, order_id):
             return HttpResponse(order.requirements)
     else:
         return HttpResponse(status=400)
+
+
+def change_order(request):
+    order = PersonalOrder.objects.get(pk = request.POST['order_id'])
+    order.payment_type = request.POST['payment']
+    need_delivery = 'isDelivered' in request.POST
+    order.need_delivery = need_delivery
+    order.delivery_address = request.POST['delivery_address']
+    order.save()
+    return redirect('view_orders')
+
+
+def cancel_order(request, order_id):
+    order = PersonalOrder.objects.get(pk=order_id)
+    order.status = 'Отменен'
+    order.save()
+    return redirect('view_orders')
