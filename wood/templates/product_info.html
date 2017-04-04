@@ -54,4 +54,17 @@
     </div>
 
     <h4 class="price">Цена: <span id="price">{{ concrete_product.price }}</span><i class="fa fa-ruble fa-fw"></i></h4>
+
+    <div class="row">
+        {% if not user.is_superuser %}
+            <div id="btn_add">
+                <button id="add" class="btn btn-primary"
+                        data-id="{{ concrete_product.id }}"
+                        data-url="{% url 'ajax_add_to_cart' %}"
+                        type="button">
+                    Добавить в корзину
+                </button>
+            </div>
+        {% endif %}
+    </div>
 </div>
