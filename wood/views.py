@@ -277,6 +277,15 @@ def view_orders(request):
     return render(request, 'view_orders.html', context)
 
 
+def save_order(request):
+    cart = Cart(request)
+    cart.clear()
+    client = Client.objects.get(user=request.user)
+    personal_orders = PersonalOrder.objects.filter(client=client)
+    context = {'personal_orders': personal_orders}
+    return render(request, 'view_orders.html', context)
+
+
 def registration(request):
     if request.method == 'GET':
         cart = Cart(request)

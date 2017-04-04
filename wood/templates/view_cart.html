@@ -30,17 +30,19 @@
                         <td title="Unit Desc">{{ cp.material.name }}<br>
                             {{ cp.coating.name }}<br>
                             {{ cp.size.width }}x{{ cp.size.height }}x{{ cp.size.length }}<br>
-                            {{ cp.size.weight }} г.</td>
+                            {{ cp.size.weight }} г.
+                        </td>
                         <td title="Unit Price">{{ cp.price }}</td>
                         <td title="Quantity"><input type="number"
                                                     data-id="{{ cp.id }}"
                                                     min="1"
                                                     max='{{ cp.number }}'
                                                     class="productQuantity"
-                                                    value="{{quantity}}"/></td>
+                                                    value="{{ quantity }}"/></td>
                         <td title="Total" class="productTotal" data-id="{{ cp.id }}">{{ price }}</td>
-                        <td title="Remove from Cart" class="text-center"><a href="{% url 'ajax_delete_from_cart' cp.id %}"
-                                                                            class="btn btn-xs btn-danger productRemove">X</a>
+                        <td title="Remove from Cart" class="text-center"><a
+                                href="{% url 'ajax_delete_from_cart' cp.id %}"
+                                class="btn btn-xs btn-danger productRemove">X</a>
                         </td>
                     </tr>
                 {% endfor %}<!-- ЭНДФОР -->
@@ -59,7 +61,9 @@
 
             <div class="row pull-right">
                 <button type="button" class="btn btn-default"><i class="fa fa-skype"></i> Перезвоните мне</button>
-                <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> Оформить</button>
+                <a href="{% url 'save_order' %}" type="button"
+                        class="btn btn-success"><i class="fa fa-check"></i> Оформить
+                </a>
             </div>
 
         </div>
