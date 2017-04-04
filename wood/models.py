@@ -63,14 +63,6 @@ class Size(models.Model):
         return str(self.length) + 'x' + str(self.width) + 'x' + str(self.height)
 
 
-# Тип доставки
-class TypeOfDelivery(models.Model):
-    id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=200)
-    # Цена в копейках
-    price = models.IntegerField()
-
-
 # Клиент
 class Client(models.Model):
     id = models.AutoField(primary_key=True)
@@ -87,8 +79,6 @@ class Client(models.Model):
 # Изделие с конкретными параметрами
 class ConcreteProduct(models.Model):
     id = models.AutoField(primary_key=True)
-    # name = models.CharField(max_length=200)
-    # Цена в копейках
     price = models.IntegerField()
     number = models.IntegerField()
     time_production = models.IntegerField(blank=True, null=True)
@@ -109,19 +99,20 @@ class Image(models.Model):
 class Order(models.Model):
     id = models.AutoField(primary_key=True)
     date = models.DateField(default=datetime.datetime.now)
-    produced = 'produced'
-    cancelled = 'cancelled'
-    waiting = 'waiting'
-    delivered = 'delivered'
     status_choise = (
-        (cancelled, 'Отменен'),
-        (waiting, 'Обрабатывается'),
-        (delivered, 'Выполнен'),
+        ('Отменен', 'Отменен'),
+        ('Обрабатывается', 'Обрабатывается'),
+        ('Выполнен', 'Выполнен'),
     )
-    status = models.CharField(max_length=15, choices=status_choise, default=waiting)
-    information = models.CharField(max_length=5000)
+    status = models.CharField(max_length=15, choices=status_choise, default='Обрабатывается')
+    delivery_address = models.CharField(max_length=2000, blank=True, null=True)
+    payment = (
+        ('Наличный расчет', 'Наличный расчет'),
+        ('Безналичный расчет', 'Безналичный расчет')
+    )
+    payment_type = models.CharField(max_length=50, choices=payment)
     client = models.ForeignKey(Client, on_delete=models.PROTECT)
-    type_of_delivery = models.ForeignKey(TypeOfDelivery, on_delete=models.PROTECT)
+    need_delivery = models.BooleanField(default=False)
 
 
 # Позиция в заказе
@@ -139,18 +130,21 @@ class PersonalOrder(models.Model):
     requirements = models.CharField(max_length=5000)
     attachments = models.FileField(upload_to='archives/personal_orders/')
     client = models.ForeignKey(Client, on_delete=models.PROTECT)
-type_of_delivery = models.ForeignKey(TypeOfDelivery, on_delete=models.PROTECT)
+    need_delivery = models.BooleanField(default=False)
+    delivery_address = models.CharField(max_length=2000, blank=True, null=True)
     date = models.DateField(default=datetime.datetime.now)
-    produced = 'produced'
-    cancelled = 'cancelled'
-    waiting = 'waiting'
-    delivered = 'delivered'
     status_choise = (
-        (produced, 'Изготовлен'),
-        (cancelled, 'Отменен'),
-        (waiting, 'Ожидает одобрения')
+        ('Изготовлен', 'Изготовлен'),
+        ('Отменен', 'Отменен'),
+        ('Обрабатывается', 'Обрабатывается')
     )
-    status = models.CharField(max_length=15, choices=status_choise, default=waiting)
+    status = models.CharField(max_length=50, choices=status_choise, default='Обрабатывается')
+    payment = (
+        ('Наличный расчет', 'Наличный расчет'),
+        ('Безналичный расчет', 'Безналичный расчет')
+    )
+    payment_type = models.CharField(max_length=50, choices=payment)
+
 
 class Cart(object):
     def __init__(self, request):
@@ -158,3 +152,29 @@ class Cart(object):
         cart = self.session.get('cart')
         if not cart:
             cart = self.session['cart'] = {}
+        self.cart = cart
+
+    def save(self):
+        self.session['cart'] = self.cart
+        self.session.modified = True
+
+    def add_concrete_product(self, concrete_product, quantity=1):
+        concrete_product_id = str(concrete_product.id)
+        if str(concrete_product_id) not in self.cart:
+            self.cart[concrete_product_id] = 0
+        self.cart[concrete_product_id] = quantity + self.cart[concrete_product_id]
+        self.save()
+        return self.cart[concrete_product_id]
+
+    def remove(self, concrete_product):
+        concrete_product_id = str(concrete_product.id)
+        if concrete_product.id in self.cart:
+            del self.cart[concrete_product_id]
+            self.save()
+
+    def __len__(self):
+        return sum(item for item in self.cart.values())
+
+    def clear(self):
+        del self.session['cart']
+        self.session.modified = True
