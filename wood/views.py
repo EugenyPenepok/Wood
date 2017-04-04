@@ -115,16 +115,14 @@ def view_product(request, category_id, product_id):
     materials = Material.objects.filter(concreteproduct__product=product).distinct()
     sizes = Size.objects.filter(concreteproduct__product=product).distinct()
     coatings = Coating.objects.filter(concreteproduct__product=product).distinct()
-    amount = concrete_products.last().number if concrete_products.exists() else 0
-    price = concrete_products.last().price if concrete_products.exists() else ''
+    concrete_product = concrete_products.last()
     context = {'category_id': category_id,
                'product': product,
                'concrete_products': concrete_products,
+               'concrete_product': concrete_product,
                'materials': materials,
                'sizes': sizes,
-               'coatings': coatings,
-               'amount': amount,
-               'price': price
+               'coatings': coatings
                }
     return render(request, 'view_product.html', context)
 
@@ -241,10 +239,16 @@ def view_profile(request):
 
 
 def view_orders(request):
+    if request.method == 'POST':
+        products = request.GET['products']
     client = Client.objects.get(user=request.user)
     personal_orders = PersonalOrder.objects.filter(client=client)
     context = {'personal_orders': personal_orders}
-    return render(request, 'view_orders.html', context)
+    page = render_to_string('view_orders.html', context)
+    data = dict()
+    data['form_is_valid'] = True
+    data['page'] = page
+    return JsonResponse(data)
 
 
 def registration(request):

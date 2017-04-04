@@ -37,7 +37,8 @@
                 $.extend(options, customOptions);
             }
             return options;
-        };;;;;;;;;;;;;;;;;;;;;
+        };
+
 
         objToReturn.getOptions = getOptions;
         return objToReturn;
@@ -61,10 +62,12 @@
                 }
             });
             return productIndex;
-        };;;;;;;;;;;;;;;;;;;;;
+        };
+
         var setAllProducts = function (products) {
             localStorage.products = JSON.stringify(products);
-        };;;;;;;;;;;;;;;;;;;;;
+        };
+
         var addProduct = function (id, name, summary, price, quantity, image) {
             var products = getAllProducts();
             products.push({
@@ -76,7 +79,7 @@
                 image: image
             });
             setAllProducts(products);
-        };;;;;;;;;;;;;;;;;;;;;
+        };
 
         /*
          PUBLIC
@@ -88,7 +91,8 @@
             } catch (e) {
                 return [];
             }
-        };;;;;;;;;;;;;;;;;;;;;
+        };
+
         var updatePoduct = function (id, quantity) {
             var productIndex = getIndexOfProduct(id);
             if (productIndex < 0) {
@@ -98,22 +102,23 @@
             products[productIndex].quantity = typeof quantity === "undefined" ? products[productIndex].quantity * 1 + 1 : quantity;
             setAllProducts(products);
             return true;
-        };;;;;;;;;;;;;;;;;;;;;
+        };
+
         var setProduct = function (id, name, summary, price, quantity, image) {
             if (typeof id === "undefined") {
-                console.error("id required");;;;;;;;;;;;;;;;;;;;;
+                console.error("id required");
                 return false;
             }
             if (typeof name === "undefined") {
-                console.error("name required");;;;;;;;;;;;;;;;;;;;;
+                console.error("name required");
                 return false;
             }
             if (typeof image === "undefined") {
-                console.error("image required");;;;;;;;;;;;;;;;;;;;;
+                console.error("image required");
                 return false;
             }
             if (!$.isNumeric(price)) {
-                console.error("price is not a number");;;;;;;;;;;;;;;;;;;;;
+                console.error("price is not a number");
                 return false;
             }
             if (!$.isNumeric(quantity)) {
@@ -125,17 +130,20 @@
             if (!updatePoduct(id)) {
                 addProduct(id, name, summary, price, quantity, image);
             }
-        };;;;;;;;;;;;;;;;;;;;;
+        };
+
         var clearProduct = function () {
             setAllProducts([]);
-        };;;;;;;;;;;;;;;;;;;;;
+        };
+
         var removeProduct = function (id) {
             var products = getAllProducts();
             products = $.grep(products, function (value, index) {
                 return value.id != id;
             });
             setAllProducts(products);
-        };;;;;;;;;;;;;;;;;;;;;
+        };
+
         var getTotalQuantity = function () {
             var total = 0;
             var products = getAllProducts();
@@ -143,7 +151,8 @@
                 total += value.quantity * 1;
             });
             return total;
-        };;;;;;;;;;;;;;;;;;;;;
+        };
+
         var getTotalPrice = function () {
             var products = getAllProducts();
             var total = 0;
@@ -151,7 +160,8 @@
                 total += value.quantity * value.price;
             });
             return total;
-        };;;;;;;;;;;;;;;;;;;;;
+        };
+
 
         objToReturn.getAllProducts = getAllProducts;
         objToReturn.updatePoduct = updatePoduct;
@@ -185,6 +195,7 @@
 
         if (!$("#" + idCartModal).length) {
             $('body').append(
+                '<form id="cart_to_orders" method="get" action="/orders/view">' +
                 '<div class="modal fade" id="' + idCartModal + '" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">' +
                 '<div class="modal-dialog" role="document">' +
                 '<div class="modal-content">' +
@@ -196,13 +207,17 @@
                 '<table class="table table-hover table-responsive" id="' + idCartTable + '"></table>' +
                 '</div>' +
                 '<div class="modal-footer">' +
+                '<input type="hidden" id="products"  value="222"/>' +
                 '<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>' +
-                '<button type="button" class="btn btn-primary ' + classCheckoutCart + '">Оплатить</button>' +
+                '<button type="submit" class="btn btn-primary ' + classCheckoutCart + '">' +
+                'Оформить</button>' +
                 '</div>' +
                 '</div>' +
                 '</div>' +
-                '</div>'
-            );
+                '</div>' +
+                '</form>'
+            )
+            ;
         }
 
         var drawTable = function () {
@@ -217,7 +232,6 @@
                     '<td class="text-center" ><img src="' + this.image + '"/></td>' +
                     '<td>' + this.name + '</td>' +
                     '<td>' + this.summary + '</td>' +
-                    '<td class="text-center"><a  href="product' + this.id + '.html"><button class="btn btn-xs btn-success">Редактировать</button></a></td>' +
                     '<td title="Unit Price">$' + this.price + '</td>' +
                     '<td title="Quantity"><input type="number" min="1" class="' + classProductQuantity + '" value="' + this.quantity + '"/></td>' +
                     '<td title="Total" class="' + classProductTotal + '">$' + total + '</td>' +
@@ -255,23 +269,25 @@
 
             showGrandTotal();
             showDiscountPrice();
-        };;;;;;;;;;;;;;;;;;;;;
+        };
+
         var showModal = function () {
             drawTable();
             $("#" + idCartModal).modal('show');
-        };;;;;;;;;;;;;;;;;;;;;
+        };
+
         var updateCart = function () {
             $.each($("." + classProductQuantity), function () {
                 var id = $(this).closest("tr").data("id");
                 ProductManager.updatePoduct(id, $(this).val());
             });
-        };;;;;;;;;;;;;;;;;;;;;
+        };
         var showGrandTotal = function () {
             $("#" + idGrandTotal).text("$" + ProductManager.getTotalPrice());
-        };;;;;;;;;;;;;;;;;;;;;
+        };
         var showDiscountPrice = function () {
             $("#" + idDiscountPrice).text("$" + options.getDiscountPrice(ProductManager.getAllProducts(), ProductManager.getTotalPrice(), ProductManager.getTotalQuantity()));
-        };;;;;;;;;;;;;;;;;;;;;
+        };
 
         /*
          EVENT
@@ -326,11 +342,32 @@
             }
             updateCart();
             options.checkoutCart(ProductManager.getAllProducts(), ProductManager.getTotalPrice(), ProductManager.getTotalQuantity());
-            ProductManager.clearProduct();
+            //ProductManager.clearProduct();
             $cartBadge.text(ProductManager.getTotalQuantity());
             $("#" + idCartModal).modal("hide");
         });
 
+        $(document).on('submit', "#cart_to_orders", function (e) {
+            var action = $(this).attr('action');
+            var products = ProductManager.getAllProducts();
+            var price = ProductManager.getTotalPrice();
+            e.preventDefault();
+            //var form = $("#cart_to_orders");
+            //console.log(form);
+            ProductManager.clearProduct();
+            $.ajax({
+                url: $(this).attr("action"),
+                type: "get",
+                data: {
+                    "products": products
+                },
+                dataType: "json",
+                cache: false,
+                success: function (data) {
+                    $(document).html(data.page);
+                }
+            });
+        });
     };
 
 

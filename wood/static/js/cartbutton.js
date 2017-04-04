@@ -35,9 +35,14 @@ $(function () {
             console.log("checking out", products, totalPrice, totalQuantity);
         },
         getDiscountPrice: function (products, totalPrice, totalQuantity) {
+            //$("#cart_to_orders").data("products", products);
+            //$("#cart_to_orders #products").html(products);
+            //alert($("#to_orders").data("products"));
             console.log("calculating discount", products, totalPrice, totalQuantity);
             return totalPrice * 0.9;
         }
-    });
+    })
+    ;
 
-});
+})
+;
