@@ -118,8 +118,8 @@ class Order(models.Model):
 # Позиция в заказе
 class PositionInOrder(models.Model):
     id = models.AutoField(primary_key=True)
-    # Цена в копейках
     amount = models.IntegerField()
+    price = models.IntegerField()
     order = models.ForeignKey(Order, on_delete=models.PROTECT)
     concrete_product = models.ForeignKey(ConcreteProduct, on_delete=models.PROTECT)
 

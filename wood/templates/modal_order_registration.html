@@ -1,16 +1,16 @@
 {% load static %}
 <script  src="{% static "js/delivery_display.js" %}" ></script>
 
-<div class="modal fade" id="modal_user_change">
+<div class="modal fade" id="modal_create_order">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Редактирование заказа</h4>
+                <h4 class="modal-title">Оформление заказа</h4>
             </div>
             <div class="modal-body">
                  <form class="form-group"
                           method="POST"
-                          action="{% url 'change_personal_order' %}">
+                          action="{% url 'create_order' %}">
                     {% csrf_token %}
                      <input type="hidden" name="order_id" id="order_id" value=""/>
                      <select class="form-control" name="payment">
