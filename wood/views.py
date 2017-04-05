@@ -544,6 +544,7 @@ def ajax_update_amount(request):
     data['form_is_valid'] = True
     return JsonResponse(data)
 
+
 def view_concrete_products(request, category_id, product_id):
     # product = Product.objects.get(pk=product_id)
     concrete_products = ConcreteProduct.objects.filter(product_id=product_id)
