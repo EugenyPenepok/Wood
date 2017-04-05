@@ -4,6 +4,7 @@ import os
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
+from django.db import transaction
 from django.db.models import ProtectedError
 from django.http import HttpResponse
 
@@ -27,7 +28,7 @@ def view_cart(request):
     concrete_products = []
     for cp_id, cp_quantity in cart.cart.items():
         cp = ConcreteProduct.objects.get(pk=cp_id)
-        concrete_products.append((cp, cp_quantity, cp.price*cp_quantity))
+        concrete_products.append((cp, cp_quantity, cp.price * cp_quantity))
     context = {'quantity_in_cart': quantity_in_cart,
                'concrete_products': concrete_products,
                'summary_price': cart.get_summary_price()}
@@ -271,9 +272,12 @@ def view_profile(request):
 
 
 def view_orders(request):
+    cart = Cart(request)
+    quantity_in_cart = len(cart)
     client = Client.objects.get(user=request.user)
     personal_orders = PersonalOrder.objects.filter(client=client)
-    context = {'personal_orders': personal_orders}
+    context = {'personal_orders': personal_orders,
+               'quantity_in_cart': quantity_in_cart}
     return render(request, 'view_orders.html', context)
 
 
@@ -579,8 +583,8 @@ def get_requirements(request, order_id):
         return HttpResponse(status=400)
 
 
-def change_order(request):
-    order = PersonalOrder.objects.get(pk = request.POST['order_id'])
+def change_personal_order(request):
+    order = PersonalOrder.objects.get(pk=request.POST['order_id'])
     order.payment_type = request.POST['payment']
     need_delivery = 'isDelivered' in request.POST
     order.need_delivery = need_delivery
@@ -589,8 +593,29 @@ def change_order(request):
     return redirect('view_orders')
 
 
-def cancel_order(request, order_id):
+def cancel_personal_order(request, order_id):
     order = PersonalOrder.objects.get(pk=order_id)
     order.status = 'Отменен'
     order.save()
+    return redirect('view_orders')
+
+
+@transaction.atomic
+def create_order(request):
+    cart = Cart(request)
+    need_delivery = 'isDelivered' in request.POST
+    client = Client.objects.get(user=request.user)
+    order = Order(need_delivery=need_delivery,
+                  delivery_address=request.POST['delivery_address'],
+                  payment_type=request.POST['payment'],
+                  client=client)
+    order.save()
+    for cp_id, cp_quantity in cart.cart.items():
+        cp = ConcreteProduct.objects.get(pk=cp_id)
+        position_in_order = PositionInOrder(order=order,
+                                            concrete_product=cp,
+                                            amount=cp_quantity,
+                                            price=cp.price)
+        position_in_order.save()
+    cart.clear()
     return redirect('view_orders')
