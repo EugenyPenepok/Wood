@@ -101,7 +101,8 @@ def create_product(request, category_id):
         product = Product(category=category,
                           name=request.POST['name'],
                           description=request.POST['comment'],
-                          product_image=image_file)
+                          product_image=image_file,
+                          visible=False)
         product.save()
         return redirect('category_content', category_id)
 
@@ -141,19 +142,22 @@ def view_product(request, category_id, product_id):
     coatings = Coating.objects.filter(concreteproduct__product=product,
                                       concreteproduct__size=sizes.first()).distinct()
 
-    concrete_product = ConcreteProduct.objects.get(product_id=product_id,
+    concrete_product = ConcreteProduct.objects.filter(product_id=product_id,
                                                       material=materials.first(),
                                                       size=sizes.first(),
                                                       coating=coatings.first())
     context = {'category_id': category_id,
                'product': product,
                'concrete_products': concrete_products,
-               'concrete_product': concrete_product,
                'materials': materials,
                'sizes': sizes,
                'coatings': coatings,
                'quantity_in_cart': quantity_in_cart
                }
+    if not concrete_product.first():
+        context['concrete_product'] = False
+    else:
+        context['concrete_product'] = concrete_product.first()
     return render(request, 'view_product.html', context)
 
 
@@ -171,6 +175,7 @@ def create_concrete_product(request, category_id, product_id):
         return render(request, 'create_concrete_product.html', context)
     elif request.method == 'POST':
         product = Product.objects.get(pk=product_id)
+        product.visible = True
         material = Material.objects.get(pk=request.POST['materials'])
         coating = Coating.objects.get(pk=request.POST['coatings'])
         size = Size.objects.get(pk=request.POST['sizes'])

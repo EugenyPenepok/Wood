@@ -2,7 +2,6 @@ import datetime
 
 from django.contrib.auth.models import User
 from django.db import models
-from decimal import Decimal
 
 
 # Категория
@@ -23,9 +22,13 @@ class Product(models.Model):
     description = models.CharField(max_length=2000)
     category = models.ForeignKey(Category, on_delete=models.PROTECT)
     product_image = models.ImageField(upload_to='images/products/')
+    visible = models.BooleanField(False)
 
     def __str__(self):
         return self.name
+
+    def is_visible(self):
+        return self.visible
 
 
 # Покрытие
