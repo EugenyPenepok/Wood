@@ -4,18 +4,7 @@
 
     {% load static %}
 
-    <script type="text/javascript">
-        function validate() {
-            if (document.getElementById('isDelivered').checked) {
-                document.getElementById("delivery_label").style.display = "initial";
-                document.getElementById("delivery_address").style.display = "initial";
-
-            } else {
-                document.getElementById("delivery_label").style.display = "none";
-                document.getElementById("delivery_address").style.display = "none";
-            }
-        }
-    </script>
+    <script  src="{% static "js/delivery_display.js" %}" ></script>
     <!--Шапочка -->
     <div class="catalog-header" xmlns="http://www.w3.org/1999/html">
         <div class="col-lg-12">

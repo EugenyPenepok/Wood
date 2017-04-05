@@ -1,8 +1,9 @@
 <!-- индивидуальные -->
 
 {% include 'modal_orders_requirements.html' %}
+{% include 'modal_order_user_change.html' %}
 
-<div class="tab-pane col-md-10 fade" id="individ_orders">
+<div class="tab-pane fade" id="individ_orders">
     <table class="table">
         <thead>
         <tr>
@@ -13,6 +14,8 @@
             <th>Тип доставки</th>
             <th>Адрес доставки</th>
             <th>Дата</th>
+            <th/>
+            <th/>
         </tr>
         </thead>
 
@@ -42,6 +45,18 @@
                     <td>{{ order.delivery_address }}</td>
                 {% endif %}
                 <td>{{ order.date }}</td>
+                {% if  order.status == 'Обрабатывается' %}
+                    <td><a data-toggle="modal" data-target="#modal_user_change">
+                        <button class="btn btn-default edit_order" data-order_id={{ order.id }}>Редактировать</button>
+                    </a>
+                    </td>
+
+                    <td>
+                        <a href="{% url 'cancel_personal_order' order.id %}">
+                            <button class="btn btn-danger">Отменить</button>
+                        </a>
+                    </td>
+                {% endif %}
             </tr>
         {% endfor %}
         </tbody>
