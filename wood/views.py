@@ -282,7 +282,9 @@ def view_orders(request):
     quantity_in_cart = len(cart)
     client = Client.objects.get(user=request.user)
     personal_orders = PersonalOrder.objects.filter(client=client)
+    orders = Order.objects.filter(client=client)
     context = {'personal_orders': personal_orders,
+               'orders': orders,
                'quantity_in_cart': quantity_in_cart}
     return render(request, 'view_orders.html', context)
 
@@ -634,5 +636,38 @@ def create_order(request):
                                             amount=cp_quantity,
                                             price=cp.price)
         position_in_order.save()
+        cp.number -= cp_quantity
+        cp.save()
     cart.clear()
+    return redirect('view_orders')
+
+
+def cancel_order(request, order_id):
+    order = Order.objects.get(pk=order_id)
+    order.status = 'Отменен'
+    order.save()
+    return redirect('view_orders')
+
+
+def view_order(request, order_id):
+    cart = Cart(request)
+    quantity_in_cart = len(cart)
+    order = Order.objects.get(pk=order_id)
+    positions = PositionInOrder.objects.filter(order=order)
+    summary_price = 0
+    for position in positions:
+        summary_price += (position.price * position.amount)
+    context = {'quantity_in_cart': quantity_in_cart,
+               'positions': positions,
+               'summary_price': summary_price}
+    return render(request, 'view_concrete_order.html', context)
+
+
+def change_order(request):
+    order = Order.objects.get(pk=request.POST['order_id'])
+    order.payment_type = request.POST['payment']
+    need_delivery = 'isDelivered' in request.POST
+    order.need_delivery = need_delivery
+    order.delivery_address = request.POST['delivery_address']
+    order.save()
     return redirect('view_orders')
