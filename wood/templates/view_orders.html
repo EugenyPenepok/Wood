@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block rows %}
     {% load static %}
-
+    {% include 'modal_order_user_change.html' %}
     <div class="catalog-header">
         <div class="col-lg-12">
             <h1>Просмотр заказов</h1>
@@ -15,39 +15,64 @@
         </ul>
         <div id="myTabContent" class="tab-content">
             <!-- из галереи -->
-            <div class="tab-pane col-md-10 active in" id="gallery_orders">
+            <div class="tab-pane active in" id="gallery_orders">
                 <table class="table">
                     <thead>
                     <tr>
-                        <th>Название</th>
-                        <th>Категория</th>
-                        <th>Дата</th>
-                        <th>Размер</th>
-                        <th>Материал</th>
-                        <th>Покрытие</th>
+                        <th>Позиции</th>
                         <th>Статус</th>
+                        <th>Тип оплаты</th>
+                        <th>Тип доставки</th>
+                        <th>Адрес доставки</th>
+                        <th>Дата</th>
                     </tr>
                     </thead>
 
                     <tbody>
-                    <!-- тут цикл -->
-                    <!-- TODO: цвет строки меняется в зависимости от статуса -->
-                    <tr>
-                        <td>имечко</td>
-                        <td>оооо</td>
-                        <td>моя оборона</td>
-                        <td>вот</td>
-                        <td>и осталось</td>
-                        <td>лишь</td>
-                        <td>снять усталость</td>
+                    {% for order in orders %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'view_order' order.id %}">
+                                    <button class="btn btn-primary ">Посмотреть</button>
+                                </a>
+                            </td>
+                            <td>{{ order.status }}</td>
+                            <td>{{ order.payment_type }}</td>
+                            {% if order.need_delivery %}
+                                <td> Нужна</td>
+                            {% else %}
+                                <td> Не нужна</td>
+                            {% endif %}
+                            {% if  order.delivery_address == None %}
+                                <td> -</td>
+                            {% else %}
+                                <td>{{ order.delivery_address }}</td>
+                            {% endif %}
+                            <td>{{ order.date }}</td>
+                            {% if  order.status == 'Обрабатывается' %}
+                                <td><a data-toggle="modal" data-target="#modal_order_change">
+                                    <button class="btn btn-default edit_order" data-order_id={{ order.id }}>
+                                        Редактировать
+                                    </button>
+                                </a>
+                                </td>
 
-                    </tr>
-                    <!-- тут эндфор -->
+                                <td>
+                                    <a href="{% url 'cancel_order' order.id %}">
+                                        <button class="btn btn-danger">Отменить</button>
+                                    </a>
+                                </td>
+                            {% else %}
+                                <td></td>
+                                <td></td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
                     </tbody>
                 </table>
             </div>
 
-        {% include 'user_view_personal_order.html' %}
+            {% include 'user_view_personal_order.html' %}
         </div>
     </div>
     <script type='text/javascript' src="{% static "/js/ajax_get_requirements.js" %}"></script>

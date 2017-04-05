@@ -1,0 +1,33 @@
+{% load static %}
+<script  src="{% static "js/delivery_display.js" %}" ></script>
+
+<div class="modal fade" id="modal_create_order">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Оформление заказа</h4>
+            </div>
+            <div class="modal-body">
+                 <form class="form-group"
+                          method="POST"
+                          action="{% url 'create_order' %}">
+                    {% csrf_token %}
+                     <input type="hidden" name="order_id" id="order_id" value=""/>
+                     <select class="form-control" name="payment">
+                            <option value="Наличный расчет">Наличный расчет</option>
+                            <option value="Безналичный расчет">Безналичный расчет</option>
+                        </select>
+                        <br><input type="checkbox" name="isDelivered" id='isDelivered' onchange="validate();"> Нужна доставка</input>
+                        <br>
+                        <label for="delivery_address" id="delivery_label" style="display: none">Адрес доставки</label>
+                        <textarea class="form-control" id='delivery_address' name="delivery_address" rows="3" id="info"
+                                  style="display: none"></textarea>
+
+                        <br><br>
+                        <input class="btn btn-primary center-block" type="submit" name="zakaz_submit"
+                               value="Сохранить"/>
+                    </form>
+            </div>
+        </div>
+    </div>
+</div>

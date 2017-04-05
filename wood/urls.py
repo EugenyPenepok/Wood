@@ -17,6 +17,7 @@ urlpatterns = [
     url(r'^category/add$', views.create_category, name='category_add'),
     url(r'^category/(?P<category_id>[0-9]+)/edit$', views.edit_category, name='category_edit'),
     url(r'^category/(?P<category_id>[0-9]+)$', views.get_products_in_category, name='category_content'),
+
     url(r'^category/(?P<category_id>[0-9]+)/product/create$', views.create_product, name='create_product'),
     url(r'^category/(?P<category_id>[0-9]+)/product/(?P<product_id>[0-9]+)$', views.view_product, name='view_product'),
     url(r'^category/(?P<category_id>[0-9]+)/product/(?P<product_id>[0-9]+)/edit$', views.edit_product,
@@ -50,6 +51,7 @@ urlpatterns = [
     url(r'^profile/view$', views.view_profile, name='view_profile'),
 
     url(r'^orders/view$', views.view_orders, name='view_orders'),
+    url(r'^orders/save$', views.save_order, name='save_order'),
 
     url(r'^category/[0-9]+/product/(?P<product_id>[0-9]+)/ajax_update_for_material$',
         views.ajax_update_for_materials, name='ajax_update_for_material'),
@@ -65,8 +67,13 @@ urlpatterns = [
     url(r'^ajax_update_cart$',
         views.ajax_update_cart, name='ajax_update_cart'),
 
-
     url(r'^profile/change_password$', views.change_password, name='change_password'),
     url(r'^order/(?P<order_id>[0-9]+)/attachments$', views.download_attachments, name='download_attachments'),
     url(r'^order/(?P<order_id>[0-9]+)/requirements$', views.get_requirements, name='get_requirements'),
+    url(r'^personal_order/change', views.change_personal_order, name='change_personal_order'),
+    url(r'^personal_order/(?P<order_id>[0-9]+)/cancel', views.cancel_personal_order, name='cancel_personal_order'),
+    url(r'^order/create', views.create_order, name='create_order'),
+    url(r'^order/(?P<order_id>[0-9]+)/cancel', views.cancel_order, name='cancel_order'),
+    url(r'^order/change', views.change_order, name='change_order'),
+    url(r'^order/(?P<order_id>[0-9]+)/view', views.view_order, name='view_order'),
 ]

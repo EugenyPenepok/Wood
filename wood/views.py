@@ -4,6 +4,7 @@ import os
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
+from django.db import transaction
 from django.db.models import ProtectedError
 from django.http import HttpResponse
 
@@ -27,7 +28,7 @@ def view_cart(request):
     concrete_products = []
     for cp_id, cp_quantity in cart.cart.items():
         cp = ConcreteProduct.objects.get(pk=cp_id)
-        concrete_products.append((cp, cp_quantity, cp.price*cp_quantity))
+        concrete_products.append((cp, cp_quantity, cp.price * cp_quantity))
     context = {'quantity_in_cart': quantity_in_cart,
                'concrete_products': concrete_products,
                'summary_price': cart.get_summary_price()}
@@ -134,10 +135,16 @@ def view_product(request, category_id, product_id):
     quantity_in_cart = len(cart)
     product = Product.objects.get(pk=product_id)
     concrete_products = ConcreteProduct.objects.filter(product_id=product_id)
-    concrete_product = concrete_products.last()
     materials = Material.objects.filter(concreteproduct__product=product).distinct()
-    sizes = Size.objects.filter(concreteproduct=concrete_product).distinct()
-    coatings = Coating.objects.filter(concreteproduct__product=product, concreteproduct__size=sizes.last()).distinct()
+    sizes = Size.objects.filter(concreteproduct__product=product,
+                                concreteproduct__material=materials.first()).distinct()
+    coatings = Coating.objects.filter(concreteproduct__product=product,
+                                      concreteproduct__size=sizes.first()).distinct()
+
+    concrete_product = ConcreteProduct.objects.get(product_id=product_id,
+                                                      material=materials.first(),
+                                                      size=sizes.first(),
+                                                      coating=coatings.first())
     context = {'category_id': category_id,
                'product': product,
                'concrete_products': concrete_products,
@@ -271,6 +278,20 @@ def view_profile(request):
 
 
 def view_orders(request):
+    cart = Cart(request)
+    quantity_in_cart = len(cart)
+    client = Client.objects.get(user=request.user)
+    personal_orders = PersonalOrder.objects.filter(client=client)
+    orders = Order.objects.filter(client=client)
+    context = {'personal_orders': personal_orders,
+               'orders': orders,
+               'quantity_in_cart': quantity_in_cart}
+    return render(request, 'view_orders.html', context)
+
+
+def save_order(request):
+    cart = Cart(request)
+    cart.clear()
     client = Client.objects.get(user=request.user)
     personal_orders = PersonalOrder.objects.filter(client=client)
     context = {'personal_orders': personal_orders}
@@ -410,10 +431,12 @@ def ajax_update_for_materials(request, product_id):
     sizes = Size.objects. \
         filter(concreteproduct__material=material, concreteproduct__product=product).distinct()
     coatings = Coating.objects. \
-        filter(concreteproduct__material=material, concreteproduct__product=product).distinct()
+        filter(concreteproduct__material=material,
+               concreteproduct__product=product,
+               concreteproduct__size=sizes.first()).distinct()
     concrete_product = ConcreteProduct.objects.get(material=material,
                                                    product=product,
-                                                   size=sizes.last(),
+                                                   size=sizes.first(),
                                                    coating=coatings.first())
 
     data['form_is_valid'] = True
@@ -443,7 +466,7 @@ def ajax_update_for_sizes(request, product_id):
     concrete_product = ConcreteProduct.objects.get(material=material,
                                                    product=product,
                                                    size=size,
-                                                   coating=coatings.first())
+                                                   coating=coatings.last())
 
     data['form_is_valid'] = True
     data['coatings'] = serializers.serialize('json', coatings)
@@ -578,5 +601,79 @@ def get_requirements(request, order_id):
     else:
         return HttpResponse(status=400)
 
-def view_cart(request):
-    return render(request, 'view_cart.html')
+
+def change_personal_order(request):
+    order = PersonalOrder.objects.get(pk=request.POST['order_id'])
+    order.payment_type = request.POST['payment']
+    need_delivery = 'isDelivered' in request.POST
+    order.need_delivery = need_delivery
+    order.delivery_address = request.POST['delivery_address']
+    order.save()
+    return redirect('view_orders')
+
+
+def cancel_personal_order(request, order_id):
+    order = PersonalOrder.objects.get(pk=order_id)
+    order.status = 'Отменен'
+    order.save()
+    return redirect('view_orders')
+
+
+@transaction.atomic
+def create_order(request):
+    cart = Cart(request)
+    need_delivery = 'isDelivered' in request.POST
+    client = Client.objects.get(user=request.user)
+    order = Order(need_delivery=need_delivery,
+                  delivery_address=request.POST['delivery_address'],
+                  payment_type=request.POST['payment'],
+                  client=client)
+    order.save()
+    for cp_id, cp_quantity in cart.cart.items():
+        cp = ConcreteProduct.objects.get(pk=cp_id)
+        position_in_order = PositionInOrder(order=order,
+                                            concrete_product=cp,
+                                            amount=cp_quantity,
+                                            price=cp.price)
+        position_in_order.save()
+        cp.number -= cp_quantity
+        cp.save()
+    cart.clear()
+    return redirect('view_orders')
+
+
+@transaction.atomic
+def cancel_order(request, order_id):
+    order = Order.objects.get(pk=order_id)
+    positions = PositionInOrder.objects.filter(order=order)
+    for position in positions:
+        position.concrete_product.number += position.amount
+        position.concrete_product.save()
+    order.status = 'Отменен'
+    order.save()
+
+    return redirect('view_orders')
+
+
+def view_order(request, order_id):
+    cart = Cart(request)
+    quantity_in_cart = len(cart)
+    order = Order.objects.get(pk=order_id)
+    positions = PositionInOrder.objects.filter(order=order)
+    summary_price = 0
+    for position in positions:
+        summary_price += (position.price * position.amount)
+    context = {'quantity_in_cart': quantity_in_cart,
+               'positions': positions,
+               'summary_price': summary_price}
+    return render(request, 'view_concrete_order.html', context)
+
+
+def change_order(request):
+    order = Order.objects.get(pk=request.POST['order_id'])
+    order.payment_type = request.POST['payment']
+    need_delivery = 'isDelivered' in request.POST
+    order.need_delivery = need_delivery
+    order.delivery_address = request.POST['delivery_address']
+    order.save()
+    return redirect('view_orders')
