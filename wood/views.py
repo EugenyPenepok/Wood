@@ -135,10 +135,16 @@ def view_product(request, category_id, product_id):
     quantity_in_cart = len(cart)
     product = Product.objects.get(pk=product_id)
     concrete_products = ConcreteProduct.objects.filter(product_id=product_id)
-    concrete_product = concrete_products.last()
     materials = Material.objects.filter(concreteproduct__product=product).distinct()
-    sizes = Size.objects.filter(concreteproduct=concrete_product).distinct()
-    coatings = Coating.objects.filter(concreteproduct__product=product, concreteproduct__size=sizes.last()).distinct()
+    sizes = Size.objects.filter(concreteproduct__product=product,
+                                concreteproduct__material=materials.first()).distinct()
+    coatings = Coating.objects.filter(concreteproduct__product=product,
+                                      concreteproduct__size=sizes.first()).distinct()
+
+    concrete_product = ConcreteProduct.objects.get(product_id=product_id,
+                                                      material=materials.first(),
+                                                      size=sizes.first(),
+                                                      coating=coatings.first())
     context = {'category_id': category_id,
                'product': product,
                'concrete_products': concrete_products,
@@ -423,10 +429,12 @@ def ajax_update_for_materials(request, product_id):
     sizes = Size.objects. \
         filter(concreteproduct__material=material, concreteproduct__product=product).distinct()
     coatings = Coating.objects. \
-        filter(concreteproduct__material=material, concreteproduct__product=product).distinct()
+        filter(concreteproduct__material=material,
+               concreteproduct__product=product,
+               concreteproduct__size=sizes.first()).distinct()
     concrete_product = ConcreteProduct.objects.get(material=material,
                                                    product=product,
-                                                   size=sizes.last(),
+                                                   size=sizes.first(),
                                                    coating=coatings.first())
 
     data['form_is_valid'] = True
@@ -456,7 +464,7 @@ def ajax_update_for_sizes(request, product_id):
     concrete_product = ConcreteProduct.objects.get(material=material,
                                                    product=product,
                                                    size=size,
-                                                   coating=coatings.first())
+                                                   coating=coatings.last())
 
     data['form_is_valid'] = True
     data['coatings'] = serializers.serialize('json', coatings)
