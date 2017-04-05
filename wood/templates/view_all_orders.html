@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% block rows %}
     {% load static %}
-    {% include 'modal_order_user_change.html' %}
     <div class="catalog-header">
         <div class="col-lg-12">
             <h1>Просмотр заказов</h1>
@@ -10,15 +9,15 @@
 
     <div class="well">
         <ul class="nav nav-tabs">
-            <li class="active"><a href="#gallery_orders" data-toggle="tab">Из галереи</a></li>
+            <li class="active"><a href="#gallery_orders" data-toggle="tab">Из каталога</a></li>
             <li><a href="#individ_orders" data-toggle="tab">Индивидуальные</a></li>
         </ul>
         <div id="myTabContent" class="tab-content">
-            <!-- из галереи -->
             <div class="tab-pane active in" id="gallery_orders">
                 <table class="table">
                     <thead>
                     <tr>
+                        <th>Пользователь</th>
                         <th>Позиции</th>
                         <th>Статус</th>
                         <th>Тип оплаты</th>
@@ -31,12 +30,31 @@
                     <tbody>
                     {% for order in orders %}
                         <tr>
+                            <td>{{ order.client.user.username }}</td>
                             <td>
                                 <a href="{% url 'view_order' order.id %}">
                                     <button class="btn btn-primary ">Посмотреть</button>
                                 </a>
                             </td>
-                            <td>{{ order.status }}</td>
+                            <td>
+                                {% if  order.status != 'Отменен' %}
+                                    <select data-id="{{ order.id }}">
+                                        {% if order.status == 'Изготовлен' %}
+                                            <option value="Изготовлен" selected="selected">Изготовлен</option>
+                                        {% else %}
+                                            <option value="Изготовлен">Изготовлен</option>
+                                        {% endif %}
+                                        {% if order.status == 'Обрабатывается' %}
+                                            <option value="Обрабатывается" selected="selected">Обрабатывается</option>
+                                        {% else %}
+                                            <option value="Обрабатывается">Обрабатывается</option>
+                                        {% endif %}
+                                        <option value="Отменен">Отменен</option>
+                                    </select>
+                                {% else %}
+                                    Отменен
+                                {% endif %}
+                            </td>
                             <td>{{ order.payment_type }}</td>
                             {% if order.need_delivery %}
                                 <td> Нужна</td>
@@ -49,31 +67,15 @@
                                 <td>{{ order.delivery_address }}</td>
                             {% endif %}
                             <td>{{ order.date }}</td>
-                            {% if  order.status == 'Обрабатывается' %}
-                                <td><a data-toggle="modal" data-target="#modal_order_change">
-                                    <button class="btn btn-default edit_order" data-order_id={{ order.id }}>
-                                        Редактировать
-                                    </button>
-                                </a>
-                                </td>
-
-                                <td>
-                                    <a href="{% url 'cancel_order' order.id %}">
-                                        <button class="btn btn-danger">Отменить</button>
-                                    </a>
-                                </td>
-                            {% else %}
-                                <td></td>
-                                <td></td>
-                            {% endif %}
                         </tr>
                     {% endfor %}
                     </tbody>
                 </table>
             </div>
 
-            {% include 'view_personal_order_user.html' %}
+            {% include 'view_personal_order_all.html' %}
         </div>
     </div>
     <script type='text/javascript' src="{% static "js/ajax_get_requirements.js" %}"></script>
+    <script type='text/javascript' src="{% static "js/ajax_change_status_order.js" %}"></script>
 {% endblock %}

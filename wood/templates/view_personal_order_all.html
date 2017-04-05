@@ -1,0 +1,66 @@
+{% include 'modal_orders_requirements.html' %}
+<div class="tab-pane fade" id="individ_orders">
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Пользователь</th>
+            <th>Описание</th>
+            <th>Вложения</th>
+            <th>Статус</th>
+            <th>Тип оплаты</th>
+            <th>Тип доставки</th>
+            <th>Адрес доставки</th>
+            <th>Дата</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        {% for order in personal_orders %}
+            <tr>
+                <td>{{ order.client.user.username }}</td>
+                <td>
+                    <a data-toggle="modal" data-target="#modal_requirements">
+                        <button class="btn btn-default order-btn" id="{{ order.id }}">Посмотреть</button>
+                    </a>
+                </td>
+                <td>
+                    <a href="{% url 'download_attachments' order.id %}">
+                        <button class="btn btn-primary">Скачать вложения</button>
+                    </a>
+                </td>
+                <td>
+                    {% if  order.status != 'Отменен' %}
+                        <select data-id="{{ order.id }}">
+                            {% if order.status == 'Изготовлен' %}
+                                <option value="Изготовлен" selected="selected">Изготовлен</option>
+                            {% else %}
+                                <option value="Изготовлен">Изготовлен</option>
+                            {% endif %}
+                            {% if order.status == 'Обрабатывается' %}
+                                <option value="Обрабатывается" selected="selected">Обрабатывается</option>
+                            {% else %}
+                                <option value="Обрабатывается">Обрабатывается</option>
+                            {% endif %}
+                            <option value="Отменен">Отменен</option>
+                        </select>
+                    {% else %}
+                        Отменен
+                    {% endif %}
+                </td>
+                <td>{{ order.payment_type }}</td>
+                {% if order.need_delivery %}
+                    <td> Нужна</td>
+                {% else %}
+                    <td> Не нужна</td>
+                {% endif %}
+                {% if  order.delivery_address == None %}
+                    <td> -</td>
+                {% else %}
+                    <td>{{ order.delivery_address }}</td>
+                {% endif %}
+                <td>{{ order.date }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>

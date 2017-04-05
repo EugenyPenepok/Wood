@@ -98,7 +98,7 @@ class Image(models.Model):
 # Заказ
 class Order(models.Model):
     id = models.AutoField(primary_key=True)
-    date = models.DateField(default=datetime.datetime.now)
+    date = models.DateTimeField(default=datetime.datetime.now)
     status_choise = (
         ('Отменен', 'Отменен'),
         ('Обрабатывается', 'Обрабатывается'),
@@ -132,7 +132,7 @@ class PersonalOrder(models.Model):
     client = models.ForeignKey(Client, on_delete=models.PROTECT)
     need_delivery = models.BooleanField(default=False)
     delivery_address = models.CharField(max_length=2000, blank=True, null=True)
-    date = models.DateField(default=datetime.datetime.now)
+    date = models.DateTimeField(default=datetime.datetime.now)
     status_choise = (
         ('Изготовлен', 'Изготовлен'),
         ('Отменен', 'Отменен'),

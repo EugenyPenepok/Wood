@@ -1,11 +1,11 @@
-
 {% load static %}
 <!-- Navigation -->
 <nav class="navbar navbar-default navbar-fixed-top topnav" role="navigation">
     <div class="container topnav">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <button type="button" class="navbar-toggle" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1">
                 <span class="sr-only">Навигация</span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
@@ -20,7 +20,7 @@
                     <li>
                         <a href="#" data-toggle="dropdown" class="dropdown-toggle">
                             {{ user.first_name }}
-                             <b class="caret"></b>
+                            <b class="caret"></b>
                         </a>
                         <ul class="dropdown-menu">
                             {% if not user.is_superuser %}
@@ -30,6 +30,7 @@
                                 <li><a href="{% url 'get_materials' %}">Материалы</a></li>
                                 <li><a href="{% url 'get_coatings' %}">Покрытия</a></li>
                                 <li><a href="{% url 'get_sizes' %}">Размеры</a></li>
+                                <li><a href="{% url 'view_all_orders' %}">Заказы</a></li>
                             {% endif %}
 
                             <li>
@@ -46,27 +47,27 @@
                         </a>
                     </li>
                     <li>
-                         <a href="{% url 'registration' %}">Регистрация</a>
+                        <a href="{% url 'registration' %}">Регистрация</a>
                     </li>
                 {% endif %}
                 <li>
                     <a href="{% url 'get_categories' %}">Каталог</a>
                 </li>
                 {% if not user.is_superuser %}
-                <li>
-                    <a href="#" data-toggle="dropdown" class="dropdown-toggle">
-                        Меню
-                        <b class="caret"></b>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li>
-                            <a href="{% url 'create_personal_order' %}">Индивидуальный заказ</a>
-                        </li>
-                        <li>
-                            <a href="/#contact">Обратная связь</a>
-                        </li>
-                    </ul>
-                </li>
+                    <li>
+                        <a href="#" data-toggle="dropdown" class="dropdown-toggle">
+                            Меню
+                            <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="{% url 'create_personal_order' %}">Индивидуальный заказ</a>
+                            </li>
+                            <li>
+                                <a href="/#contact">Обратная связь</a>
+                            </li>
+                        </ul>
+                    </li>
                     <li>
                         <a href="{% url "view_cart" %}">
                         <span class="glyphicon glyphicon-shopping-cart">

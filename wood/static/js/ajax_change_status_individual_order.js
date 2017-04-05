@@ -1,7 +1,7 @@
 $(function () {
 
     var update_amount = function () {
-        var number = $(this);
+        var select = $(this);
         $.ajaxSetup({
             beforeSend: function (xhr, settings) {
                 if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
@@ -10,18 +10,18 @@ $(function () {
             }
         });
         $.ajax({
-            url: '/ajax_update_amount',
+            url: '/ajax_change_status_personal_order',
             type: 'post',
             data: {
-                'id': number.attr('data-id'),
-                'quantity': number.val()
+                'id': select.attr('data-id'),
+                'status': select.val()
             },
             dataType: 'json',
             cache: false
         });
     };
 
-    $('td input').on('click', update_amount);
+    $('td select').on('change', update_amount);
 
 });
 

@@ -289,13 +289,15 @@ def view_orders(request):
     return render(request, 'view_orders.html', context)
 
 
-def save_order(request):
+def view_all_orders(request):
     cart = Cart(request)
-    cart.clear()
-    client = Client.objects.get(user=request.user)
-    personal_orders = PersonalOrder.objects.filter(client=client)
-    context = {'personal_orders': personal_orders}
-    return render(request, 'view_orders.html', context)
+    quantity_in_cart = len(cart)
+    personal_orders = PersonalOrder.objects.all()
+    orders = Order.objects.all().order_by('status', '-date')
+    context = {'personal_orders': personal_orders,
+               'orders': orders,
+               'quantity_in_cart': quantity_in_cart}
+    return render(request, 'view_all_orders.html', context)
 
 
 def registration(request):
@@ -541,6 +543,28 @@ def ajax_update_amount(request):
     concrete_product = ConcreteProduct.objects.get(pk=cp_id)
     concrete_product.number = quantity
     concrete_product.save()
+    data['form_is_valid'] = True
+    return JsonResponse(data)
+
+
+def ajax_change_status_order(request):
+    data = dict()
+    id = request.POST['id']
+    status = request.POST['status']
+    order = Order.objects.get(pk=id)
+    order.status = status
+    order.save()
+    data['form_is_valid'] = True
+    return JsonResponse(data)
+
+
+def ajax_change_status_personal_order(request):
+    data = dict()
+    id = request.POST['id']
+    status = request.POST['status']
+    personal_order = PersonalOrder.objects.get(pk=id)
+    personal_order.status = status
+    personal_order.save()
     data['form_is_valid'] = True
     return JsonResponse(data)
 
