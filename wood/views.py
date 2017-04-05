@@ -625,10 +625,16 @@ def create_order(request):
     return redirect('view_orders')
 
 
+@transaction.atomic
 def cancel_order(request, order_id):
     order = Order.objects.get(pk=order_id)
+    positions = PositionInOrder.objects.filter(order=order)
+    for position in positions:
+        position.concrete_product.number += position.amount
+        position.concrete_product.save()
     order.status = 'Отменен'
     order.save()
+
     return redirect('view_orders')
 
 
