@@ -1,5 +1,4 @@
 from django.conf.urls import url
-
 from . import views
 
 urlpatterns = [
@@ -70,18 +69,20 @@ urlpatterns = [
     url(r'^ajax_update_amount$',
         views.ajax_update_amount, name='ajax_update_amount'),
 
-    url(r'^ajax_change_status_order',
+    url(r'^ajax_change_status_order$',
         views.ajax_change_status_order, name='ajax_change_status_order'),
-    url(r'^ajax_change_status_personal_order',
+    url(r'^ajax_change_status_personal_order$',
         views.ajax_change_status_personal_order, name='ajax_change_status_personal_order'),
 
     url(r'^profile/change_password$', views.change_password, name='change_password'),
     url(r'^order/(?P<order_id>[0-9]+)/attachments$', views.download_attachments, name='download_attachments'),
     url(r'^order/(?P<order_id>[0-9]+)/requirements$', views.get_requirements, name='get_requirements'),
-    url(r'^personal_order/change', views.change_personal_order, name='change_personal_order'),
-    url(r'^personal_order/(?P<order_id>[0-9]+)/cancel', views.cancel_personal_order, name='cancel_personal_order'),
-    url(r'^order/create', views.create_order, name='create_order'),
-    url(r'^order/(?P<order_id>[0-9]+)/cancel', views.cancel_order, name='cancel_order'),
-    url(r'^order/change', views.change_order, name='change_order'),
-    url(r'^order/(?P<order_id>[0-9]+)/view', views.view_order, name='view_order'),
+    url(r'^personal_order/change$', views.change_personal_order, name='change_personal_order'),
+    url(r'^personal_order/(?P<order_id>[0-9]+)/cancel$', views.cancel_personal_order, name='cancel_personal_order'),
+    url(r'^order/create$', views.create_order, name='create_order'),
+    url(r'^order/(?P<order_id>[0-9]+)/cancel$', views.cancel_order, name='cancel_order'),
+    url(r'^order/change$', views.change_order, name='change_order'),
+    url(r'^order/(?P<order_id>[0-9]+)/view$', views.view_order, name='view_order'),
+
+    url(r'^report/(?P<select_value>[0-9]+)$', views.view_report, name='view_report'),
 ]

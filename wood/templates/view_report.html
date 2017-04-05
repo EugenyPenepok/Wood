@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block rows %}
+
+    <div class="container">
+        <div class="catalog-header">
+            <div class="col-lg-12">
+                <h1>Самые покупаемые товары</h1>
+            </div>
+        </div>
+
+        <div class="main-login main-center">
+
+            <div class=".col-md-6">
+                <label>
+                    <i class="fa fa-clock-o" aria-hidden="true"></i> Период&nbsp&nbsp&nbsp
+                </label>
+                <select class="form-control" onchange="location.href=this.value">
+                    {% if selected_value == '1' %}
+                        <option selected="selected" value="/report/1">За сутки</option>
+                    {% else %}
+                        <option value="/report/1">За сутки</option>
+                    {% endif %}
+                    {% if selected_value == '2' %}
+                        <option selected="selected" value="/report/2">За неделю</option>
+                    {% else %}
+                        <option value="/report/2">За неделю</option>
+                    {% endif %}
+                    {% if selected_value == '3' %}
+                        <option selected="selected" value="/report/3">За месяц</option>
+                    {% else %}
+                        <option value="/report/3">За месяц</option>
+                    {% endif %}
+                    {% if selected_value == '4' %}
+                        <option selected="selected" value="/report/4">За год</option>
+                    {% else %}
+                        <option value="/report/4">За год</option>
+                    {% endif %}
+                    {% if selected_value == '5' %}
+                        <option selected="selected" value="/report/5">За все время</option>
+                    {% else %}
+                        <option value="/report/5">За все время</option>
+                    {% endif %}
+                </select>
+            </div>
+
+            <div class=".col-md-8">
+                <table class="table table-hover table-responsive" id="cartTable">
+                    <tr>
+                        <th></th>
+                        <th>Категория</th>
+                        <th>Параметры</th>
+                        <th>Стоимость</th>
+                        <th>Количество</th>
+                        <th>Общая стоимость</th>
+                    </tr>
+
+                    {% for cp, amount, price in list_amounts %}
+                        <tr title="СТРОКА С ТОВАРОМ">
+                            <td>
+                                {% load staticfiles %}
+                                <img class="lib-img-show" src="{{ cp.product.product_image.url }}">
+                            </td>
+                            <td>{{ cp.product.name }}</td>
+                            <td>{{ cp.material.name }}<br>
+                                {{ cp.coating.name }}<br>
+                                {{ cp.size.width }}x{{ cp.size.height }}x{{ cp.size.length }}
+                            </td>
+                            <td>{{ cp.price }}</td>
+                            <td>{{ amount }}</td>
+                            <td>{{ price }}</td>
+                        </tr>
+                    {% endfor %}
+
+                </table>
+            </div>
+
+            {#            <button type="submit" class="btn btn-primary"><i class="fa fa-file-excel-o" aria-hidden="true"></i>Экспорт в#}
+            {#                Excel#}
+            {#            </button>#}
+        </div>
+    </div>
+    {% load static %}
+    {#    <script src="{% static "js/ajax_update_report.js" %}"></script>#}
+
+{% endblock %}
