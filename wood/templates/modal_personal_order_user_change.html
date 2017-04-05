@@ -5,6 +5,9 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
                 <h4 class="modal-title">Редактирование заказа</h4>
             </div>
             <div class="modal-body">
@@ -12,15 +15,15 @@
                           method="POST"
                           action="{% url 'change_personal_order' %}">
                     {% csrf_token %}
-                     <input type="hidden" name="order_id" id="order_id" value=""/>
+                     <input type="hidden" name="order_id" id="personal_order_id" value=""/>
                      <select class="form-control" name="payment">
                             <option value="Наличный расчет">Наличный расчет</option>
                             <option value="Безналичный расчет">Безналичный расчет</option>
                         </select>
-                        <br><input type="checkbox" name="isDelivered" id='isDelivered' onchange="validate();"> Нужна доставка</input>
+                        <br><input type="checkbox" name="isDelivered" id='isDelivered_personal' onchange="validate_personal();"> Нужна доставка</input>
                         <br>
-                        <label for="delivery_address" id="delivery_label" style="display: none">Адрес доставки</label>
-                        <textarea class="form-control" id='delivery_address' name="delivery_address" rows="3" id="info"
+                        <label for="delivery_address" id="delivery_label_personal" style="display: none">Адрес доставки</label>
+                        <textarea class="form-control" id='delivery_address_personal' name="delivery_address" rows="3" id="info"
                                   style="display: none"></textarea>
 
                         <br><br>
