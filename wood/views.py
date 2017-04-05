@@ -717,3 +717,66 @@ def change_order(request):
     order.delivery_address = request.POST['delivery_address']
     order.save()
     return redirect('view_orders')
+
+
+def view_report(request, select_value):
+    amount_concrete_products = dict()
+    period = datetime.datetime.now()
+    if select_value == '1':
+        period -= datetime.timedelta(1)
+    elif select_value == '2':
+        period -= datetime.timedelta(7)
+    elif select_value == '3':
+        period -= datetime.timedelta(31)
+    elif select_value == '4':
+        period -= datetime.timedelta(365)
+    if select_value == '5':
+        all_parts_of_orders = PositionInOrder.objects.all()
+    else:
+        all_parts_of_orders = PositionInOrder.objects.filter(order__date__gt=period)
+    for part in all_parts_of_orders:
+        if amount_concrete_products.get(str(part.concrete_product.id)) is None:
+            amount_concrete_products[str(part.concrete_product.id)] = 0
+        amount_concrete_products[str(part.concrete_product.id)] += part.amount
+    list_amounts = []
+    for cp_id, amount in amount_concrete_products.items():
+        cp = ConcreteProduct.objects.get(pk=cp_id)
+        list_amounts.append((cp, amount, amount*cp.price))
+    list_amounts.sort(key=lambda x: x[1], reverse=True)
+    return render(request, 'view_report.html', {'list_amounts': list_amounts, 'selected_value': select_value})
+
+
+def ajax_update_report(request):
+    data = dict()
+    punkt = request.GET['period']
+    amount_concrete_products = dict()
+    period = datetime.datetime.now()
+    if punkt == '1':
+        period -= datetime.timedelta(1)
+    elif punkt == '2':
+        period -= datetime.timedelta(7)
+    elif punkt == '3':
+        period -= datetime.timedelta(31)
+    elif punkt == '4':
+        period -= datetime.timedelta(365)
+    if punkt == '5':
+        all_orders = Order.objects.all()
+    else:
+        all_orders = Order.objects.filter(date__gt=period)
+    all_parts_of_orders = PositionInOrder.objects.all()
+    parts_of_orders = []
+    for order in all_orders:
+        for part in all_parts_of_orders:
+            if part.order == order:
+                parts_of_orders.append(part)
+    for part in parts_of_orders:
+        if amount_concrete_products.get(str(part.concrete_product.id)) is None:
+            amount_concrete_products[str(part.concrete_product.id)] = 0
+        amount_concrete_products[str(part.concrete_product.id)] += part.amount
+    list_amounts = []
+    for cp_id, amount in amount_concrete_products.items():
+        cp = ConcreteProduct.objects.get(pk=cp_id)
+        list_amounts.append((cp, amount, amount*cp.price))
+    data['form_is_valid'] = True
+    data['list_amounts'] = list_amounts
+    return render(request, 'view_report.html', {'list_amounts': list_amounts})
