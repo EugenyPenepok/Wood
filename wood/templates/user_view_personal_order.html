@@ -1,7 +1,7 @@
 <!-- индивидуальные -->
 
 {% include 'modal_orders_requirements.html' %}
-{% include 'modal_order_user_change.html' %}
+{% include 'modal_personal_order_user_change.html' %}
 
 <div class="tab-pane fade" id="individ_orders">
     <table class="table">
@@ -21,43 +21,46 @@
 
         <tbody>
         {% for order in personal_orders %}
-            <tr>
-                <td>
-                    <a data-toggle="modal" data-target="#modal_requirements">
-                        <button class="btn btn-default order-btn" id="{{ order.id }}">Посмотреть</button>
-                    </a>
+        <tr>
+            <td>
+                <a data-toggle="modal" data-target="#modal_requirements">
+                    <button class="btn btn-default order-btn" id="{{ order.id }}">Посмотреть</button>
+                </a>
+            </td>
+            <td>
+                <a href="{% url 'download_attachments' order.id %}">
+                    <button class="btn btn-primary">Скачать вложения</button>
+                </a>
+            </td>
+            <td>{{ order.status }}</td>
+            <td>{{ order.payment_type }}</td>
+            {% if order.need_delivery %}
+                <td> Нужна</td>
+            {% else %}
+                <td> Не нужна</td>
+            {% endif %}
+            {% if  order.delivery_address == None %}
+                <td> -</td>
+            {% else %}
+                <td>{{ order.delivery_address }}</td>
+            {% endif %}
+            <td>{{ order.date }}</td>
+            {% if  order.status == 'Обрабатывается' %}
+                <td><a data-toggle="modal" data-target="#modal_user_change">
+                    <button class="btn btn-default edit_order" data-order_id={{ order.id }}>Редактировать</button>
+                </a>
                 </td>
-                <td>
-                    <a href="{% url 'download_attachments' order.id %}">
-                        <button class="btn btn-primary">Скачать вложения</button>
-                    </a>
-                </td>
-                <td>{{ order.status }}</td>
-                <td>{{ order.payment_type }}</td>
-                {% if order.need_delivery %}
-                    <td> Нужна</td>
-                {% else %}
-                    <td> Не нужна</td>
-                {% endif %}
-                {% if  order.delivery_address == None %}
-                    <td> -</td>
-                {% else %}
-                    <td>{{ order.delivery_address }}</td>
-                {% endif %}
-                <td>{{ order.date }}</td>
-                {% if  order.status == 'Обрабатывается' %}
-                    <td><a data-toggle="modal" data-target="#modal_user_change">
-                        <button class="btn btn-default edit_order" data-order_id={{ order.id }}>Редактировать</button>
-                    </a>
-                    </td>
 
-                    <td>
-                        <a href="{% url 'cancel_personal_order' order.id %}">
-                            <button class="btn btn-danger">Отменить</button>
-                        </a>
-                    </td>
-                {% endif %}
-            </tr>
+                <td>
+                    <a href="{% url 'cancel_personal_order' order.id %}">
+                        <button class="btn btn-danger">Отменить</button>
+                    </a>
+                </td>
+            {% else %}
+                <td></td>
+                <td></td>
+            {% endif %}
+        </tr>
         {% endfor %}
         </tbody>
     </table>
