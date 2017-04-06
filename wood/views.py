@@ -286,8 +286,8 @@ def view_orders(request):
     cart = Cart(request)
     quantity_in_cart = len(cart)
     client = Client.objects.get(user=request.user)
-    personal_orders = PersonalOrder.objects.filter(client=client)
-    orders = Order.objects.filter(client=client)
+    personal_orders = PersonalOrder.objects.filter(client=client).order_by('-date')
+    orders = Order.objects.filter(client=client).order_by('-date')
     context = {'personal_orders': personal_orders,
                'orders': orders,
                'quantity_in_cart': quantity_in_cart}

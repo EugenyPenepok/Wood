@@ -36,7 +36,13 @@
                                     <button class="btn btn-primary ">Посмотреть</button>
                                 </a>
                             </td>
+                            {% if order.status == 'Изготовлен' %}
+                            <td class="success">{{ order.status }}</td>
+                            {% elif order.status == 'Отменен' %}
+                            <td class="danger">{{ order.status }}</td>
+                            {% else %}
                             <td>{{ order.status }}</td>
+                            {% endif %}
                             <td>{{ order.payment_type }}</td>
                             {% if order.need_delivery %}
                                 <td> Нужна</td>
@@ -48,7 +54,7 @@
                             {% else %}
                                 <td>{{ order.delivery_address }}</td>
                             {% endif %}
-                            <td>{{ order.date }}</td>
+                            <td>{{ order.date}}</td>
                             {% if  order.status == 'Обрабатывается' %}
                                 <td><a data-toggle="modal" data-target="#modal_order_change">
                                     <button class="btn btn-default edit_order" data-order_id={{ order.id }}>
