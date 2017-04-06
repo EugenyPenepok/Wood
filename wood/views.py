@@ -785,3 +785,25 @@ def ajax_update_report(request):
     data['form_is_valid'] = True
     data['list_amounts'] = list_amounts
     return render(request, 'view_report.html', {'list_amounts': list_amounts})
+
+
+def ajax_update_cost_delivery(request):
+    data = dict()
+    order_id = request.POST['id']
+    cost = request.POST['cost']
+    order = Order.objects.get(pk=order_id)
+    order.cost_delivery = cost
+    order.save()
+    data['form_is_valid'] = True
+    return JsonResponse(data)
+
+
+def ajax_update_date_delivery(request):
+    data = dict()
+    order_id = request.POST['id']
+    date = request.POST['date']
+    order = Order.objects.get(pk=order_id)
+    order.date_delivery = date
+    order.save()
+    data['form_is_valid'] = True
+    return JsonResponse(data)
