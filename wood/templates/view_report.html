@@ -46,25 +46,26 @@
             <div class=".col-md-8">
                 <table class="table table-hover table-responsive" id="cartTable">
                     <tr>
-                        <th></th>
-                        <th>Категория</th>
+                        <th>Изделие</th>
                         <th>Параметры</th>
+                        <th>Категория</th>
                         <th>Стоимость</th>
                         <th>Количество</th>
                         <th>Общая стоимость</th>
                     </tr>
 
-                    {% for cp, amount, price in list_amounts %}
+                    {% for cp, amount, price, cat_name in list_amounts %}
                         <tr title="СТРОКА С ТОВАРОМ">
-                            <td>
-                                {% load staticfiles %}
-                                <img class="lib-img-show" src="{{ cp.product.product_image.url }}">
-                            </td>
+{#                            <td>#}
+{#                                {% load staticfiles %}#}
+{#                                <img class="lib-img-show" src="{{ cp.product.product_image.url }}">#}
+{#                            </td>#}
                             <td>{{ cp.product.name }}</td>
                             <td>{{ cp.material.name }}<br>
                                 {{ cp.coating.name }}<br>
                                 {{ cp.size.width }}x{{ cp.size.height }}x{{ cp.size.length }}
                             </td>
+                            <td>{{ cat_name }}</td>
                             <td>{{ cp.price }}</td>
                             <td>{{ amount }}</td>
                             <td>{{ price }}</td>
@@ -80,6 +81,5 @@
         </div>
     </div>
     {% load static %}
-    {#    <script src="{% static "js/ajax_update_report.js" %}"></script>#}
 
 {% endblock %}
