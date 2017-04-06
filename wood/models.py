@@ -116,6 +116,8 @@ class Order(models.Model):
     payment_type = models.CharField(max_length=50, choices=payment)
     client = models.ForeignKey(Client, on_delete=models.PROTECT)
     need_delivery = models.BooleanField(default=False)
+    date_delivery = models.DateTimeField()
+    cost_delivery = models.IntegerField()
 
 
 # Позиция в заказе

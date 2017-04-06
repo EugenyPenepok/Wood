@@ -13,6 +13,9 @@ from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from django.core import serializers
 
+
+from datetime import datetime
+
 from wood.models import *
 
 
@@ -176,6 +179,7 @@ def create_concrete_product(request, category_id, product_id):
     elif request.method == 'POST':
         product = Product.objects.get(pk=product_id)
         product.visible = True
+        product.save()
         material = Material.objects.get(pk=request.POST['materials'])
         coating = Coating.objects.get(pk=request.POST['coatings'])
         size = Size.objects.get(pk=request.POST['sizes'])
@@ -286,8 +290,8 @@ def view_orders(request):
     cart = Cart(request)
     quantity_in_cart = len(cart)
     client = Client.objects.get(user=request.user)
-    personal_orders = PersonalOrder.objects.filter(client=client)
-    orders = Order.objects.filter(client=client)
+    personal_orders = PersonalOrder.objects.filter(client=client).order_by('-date')
+    orders = Order.objects.filter(client=client).order_by('-date')
     context = {'personal_orders': personal_orders,
                'orders': orders,
                'quantity_in_cart': quantity_in_cart}
@@ -741,7 +745,8 @@ def view_report(request, select_value):
     list_amounts = []
     for cp_id, amount in amount_concrete_products.items():
         cp = ConcreteProduct.objects.get(pk=cp_id)
-        list_amounts.append((cp, amount, amount*cp.price))
+        cat_name = Category.objects.get(product__concreteproduct=cp).name
+        list_amounts.append((cp, amount, amount*cp.price, cat_name))
     list_amounts.sort(key=lambda x: x[1], reverse=True)
     return render(request, 'view_report.html', {'list_amounts': list_amounts, 'selected_value': select_value})
 
