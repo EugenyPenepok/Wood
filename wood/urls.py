@@ -69,6 +69,12 @@ urlpatterns = [
     url(r'^ajax_update_amount$',
         views.ajax_update_amount, name='ajax_update_amount'),
 
+    url(r'^ajax_update_cost_delivery$',
+        views.ajax_update_cost_delivery, name='ajax_update_cost_delivery'),
+    url(r'^ajax_update_date_delivery$',
+        views.ajax_update_date_delivery, name='ajax_update_date_delivery'),
+
+
     url(r'^ajax_change_status_order$',
         views.ajax_change_status_order, name='ajax_change_status_order'),
     url(r'^ajax_change_status_personal_order$',
