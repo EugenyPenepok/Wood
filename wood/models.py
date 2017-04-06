@@ -116,8 +116,8 @@ class Order(models.Model):
     payment_type = models.CharField(max_length=50, choices=payment)
     client = models.ForeignKey(Client, on_delete=models.PROTECT)
     need_delivery = models.BooleanField(default=False)
-    date_delivery = models.DateTimeField()
-    cost_delivery = models.IntegerField()
+    date_delivery = models.DateField(default=datetime.datetime.now)
+    cost_delivery = models.IntegerField(default=0)
 
 
 # Позиция в заказе
@@ -136,7 +136,7 @@ class PersonalOrder(models.Model):
     attachments = models.FileField(upload_to='archives/personal_orders/')
     client = models.ForeignKey(Client, on_delete=models.PROTECT)
     need_delivery = models.BooleanField(default=False)
-    date_delivery = models.DateTimeField()
+    date_delivery = models.DateField(default=datetime.datetime.now)
     cost_delivery = models.IntegerField()
     delivery_address = models.CharField(max_length=2000, blank=True, null=True)
     date = models.DateTimeField(default=datetime.datetime.now)
