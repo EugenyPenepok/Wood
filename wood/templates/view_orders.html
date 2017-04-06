@@ -24,6 +24,8 @@
                         <th>Тип оплаты</th>
                         <th>Тип доставки</th>
                         <th>Адрес доставки</th>
+                        <th>Дата доставки</th>
+                        <th>Стоимость доставки</th>
                         <th>Дата</th>
                     </tr>
                     </thead>
@@ -45,8 +47,12 @@
                             {% endif %}
                             {% if  order.delivery_address == None %}
                                 <td> -</td>
+                                <td> -</td>
+                                <td> -</td>
                             {% else %}
                                 <td>{{ order.delivery_address }}</td>
+                                <td>{{ order.date_delivery }}</td>
+                                <td>{{ order.cost_delivery }}</td>
                             {% endif %}
                             <td>{{ order.date }}</td>
                             {% if  order.status == 'Обрабатывается' %}

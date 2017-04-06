@@ -136,6 +136,8 @@ class PersonalOrder(models.Model):
     attachments = models.FileField(upload_to='archives/personal_orders/')
     client = models.ForeignKey(Client, on_delete=models.PROTECT)
     need_delivery = models.BooleanField(default=False)
+    date_delivery = models.DateTimeField()
+    cost_delivery = models.IntegerField()
     delivery_address = models.CharField(max_length=2000, blank=True, null=True)
     date = models.DateTimeField(default=datetime.datetime.now)
     status_choise = (
