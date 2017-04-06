@@ -38,9 +38,14 @@
                                     <button class="btn btn-primary ">Посмотреть</button>
                                 </a>
                             </td>
+                            {% if order.status == 'Изготовлен' %}
+                            <td class="success">{{ order.status }}</td>
+                            {% elif order.status == 'Отменен' %}
+                            <td class="danger">{{ order.status }}</td>
+                            {% else %}
                             <td>{{ order.status }}</td>
-                            <td>{{ order.date }}</td>
-                            <td>{{ order.payment_type }}</td>
+							{% endif %}
+							<td>{{ order.date }}</td>                            <td>{{ order.payment_type }}</td>
                             {% if order.need_delivery %}
                                 <td> Нужна</td>
                             {% else %}
@@ -51,14 +56,13 @@
                             {% else %}
                                 <td>{{ order.delivery_address }}</td>
                             {% endif %}
-                            {% if  order.cost_delivery == 0 %}
+							{% if  order.cost_delivery == 0 %}
                                 <td> -</td>
                                 <td> -</td>
                             {% else %}
                                 <td>{{ order.date_delivery }}</td>
                                 <td>{{ order.cost_delivery }}</td>
-                            {% endif %}
-                            {% if  order.status == 'Обрабатывается' %}
+                            {% endif %}                            {% if  order.status == 'Обрабатывается' %}
                                 <td><a data-toggle="modal" data-target="#modal_order_change">
                                     <button class="btn btn-default edit_order" data-order_id={{ order.id }}>
                                         Редактировать
