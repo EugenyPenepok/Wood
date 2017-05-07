@@ -219,6 +219,7 @@ def create_personal_order(request):
                                        attachments=file,
                                        need_delivery=need_delivery,
                                        delivery_address=request.POST['delivery_address'],
+                                       cost_delivery = 0,
                                        payment_type=request.POST['payment'])
         personal_order.save()
         return redirect('index')
